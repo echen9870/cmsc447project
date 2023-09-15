@@ -1,9 +1,12 @@
-import React from "react";
 import Navbar from "./Navbar";
+import Taskgroup from "./Taskgroup";
 const Dashboard = () => {
   return (
     <>
-      <Navbar></Navbar>
+      <div className="flex">
+        <Navbar></Navbar>
+        <Taskgroup></Taskgroup>
+      </div>
     </>
   );
 };
