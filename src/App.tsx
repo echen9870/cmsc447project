@@ -1,12 +1,11 @@
 import "./App.css";
+import Dashboard from "./componets/Dashboard";
 
 function App() {
   return (
-    <>
-      <div className="bg-purple-400 h-span h-screen">
-        <p>Hi</p>
-      </div>
-    </>
+    <div className="h-screen bg-prismDarkPurple">
+      <Dashboard></Dashboard>
+    </div>
   );
 }
 
