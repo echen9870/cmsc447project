@@ -8,7 +8,9 @@ function LoginPage() {
 
   const [isLogin, setIsLogin] = useState(true);
 
-  const handleInputChange = (e: { target: { name: any; value: any } }) => {
+  const handleInputChange = (e: {
+    target: { name: string; value: string };
+  }) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -18,6 +20,11 @@ function LoginPage() {
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    if (isLogin) {
+      console.log("Logging in");
+    } else {
+      console.log("Creating an Account");
+    }
   };
 
   const toggleLoginSignup = () => {
@@ -25,49 +32,38 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">
-          {isLogin ? "Login" : "Sign Up"}
-        </h2>
+    <div className="min-h-screen flex items-center justify-center bg-prismDarkPurple">
+      <div className="bg-prismLightPurple p-8 rounded-lg shadow-lg text-white">
+        <h2 className="text-2xl mb-4">{isLogin ? "Login" : "Sign Up"}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-600">
-              Username
-            </label>
+            <label className="block">Username</label>
             <input
               type="text"
-              value={formData.username}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 rounded text-gray-800"
               required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-600">
-              Password
-            </label>
+            <label className="block ">Password</label>
             <input
               type="password"
-              value={formData.password}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 rounded text-gray-800"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            className="w-full bg-blue-500 text-white p-2 rounded"
           >
             {isLogin ? "Login" : "Sign Up"}
           </button>
         </form>
         <p className="mt-4 text-gray-600">
           {isLogin ? "Don't have an account?" : "Already have an account?"}
-          <button
-            className="ml-2 text-blue-500 hover:underline"
-            onClick={toggleLoginSignup}
-          >
+          <button className="ml-2 text-blue-500" onClick={toggleLoginSignup}>
             {isLogin ? "Sign Up" : "Login"}
           </button>
         </p>

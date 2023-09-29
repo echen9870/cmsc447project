@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.finishButton {
+  @apply bg-blue-500 m-1 py-1 px-1 rounded;
+}
+.editButton {
+  @apply bg-prismStrongPurple m-1 py-1 px-1 rounded;
+}
+.deleteButton {
+  @apply bg-red-500 m-1 py-1 px-1 rounded;
+}
+.expandButton {
+  @apply bg-green-500 m-1 py-1 px-1 rounded;
+}
+.task {
+  @apply flex-col text-white flex bg-prismPurple border-gray-400 border-2 rounded-lg m-2 p-2;
+}
+.expandContent {
+  @apply flex-grow flex flex-col;
+}
