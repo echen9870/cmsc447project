@@ -5,7 +5,16 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        prismDarkPurple:'#222136',
+        prismDark:'#1a192b',
+        prismPurple:'#2a2c48',
+        prismLightPurple:'#2a2c48',
+        prismGroupInput:'#36375c',
+        prismStrongPurple:'#826ad8'
+      }
+    },
   },
   plugins: [],
 }

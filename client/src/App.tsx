@@ -1,9 +1,9 @@
 import "./App.css";
-import Dashboard from "./assets/components/dashboard/Dashboard";
-import Login from "./assets/components/login/LoginPage";
+import Dashboard from "./pages/Dashboard";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
-  return <Dashboard></Dashboard>;
+  return <LoginPage></LoginPage>;
 }
 
 export default App;
