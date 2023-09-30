@@ -1,0 +1,13 @@
+curl -X POST -H "Content-Type: application/json" --data-binary "{\"username\": \"cat\", \"password\": \"123\"}" http://localhost:3000/auth/signup
+{"message":"User created successfully"}
+
+_id :
+6517be09a5822b67e62dee0a
+username :
+"cat"
+password :
+"123"
+__v :
+0
+
+the server works, but don't know how to connect it with vite, right now
