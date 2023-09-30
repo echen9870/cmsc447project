@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Axios from "axios"; // Import Axios - for backend interaction
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -8,9 +9,7 @@ function LoginPage() {
 
   const [isLogin, setIsLogin] = useState(true);
 
-  const handleInputChange = (e: {
-    target: { name: string; value: string };
-  }) => {
+  const handleInputChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -18,12 +17,29 @@ function LoginPage() {
     });
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    if (isLogin) {
-      console.log("Logging in");
-    } else {
-      console.log("Creating an Account");
+    const { username, password } = formData;
+
+    try {
+      if (isLogin) {
+        console.log(username);
+        // If it's a login, send a POST request to your login endpoint
+        const response = await Axios.post("http://localhost:3000/auth/login", {
+          username,
+          password,
+        });
+        console.log("Logged in:", response.data);
+      } else {
+        // If it's a sign-up, send a POST request to your sign-up endpoint
+        const response = await Axios.post("http://localhost:3000/auth/signup", {
+          username,
+          password,
+        });
+        console.log("Account created:", response.data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
@@ -40,6 +56,7 @@ function LoginPage() {
             <label className="block">Username</label>
             <input
               type="text"
+              name="username"
               onChange={handleInputChange}
               className="w-full p-2 rounded text-gray-800"
               required
@@ -49,6 +66,7 @@ function LoginPage() {
             <label className="block ">Password</label>
             <input
               type="password"
+              name="password"
               onChange={handleInputChange}
               className="w-full p-2 rounded text-gray-800"
               required

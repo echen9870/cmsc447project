@@ -4,6 +4,7 @@ var User = require('../../models/userModel');
 
 // Route for user registration
 router.post('/signup', async (req, res) => {
+  console.log(req.body);
   try {
     const { username, password } = req.body;
     const user = new User({ username, password });
