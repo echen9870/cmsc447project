@@ -2,25 +2,31 @@ var express = require('express');
 var router = express.Router();
 var User = require('../../models/userModel');
 
-//create a new user
-router.post('/create', (req, res) => {
-  const { username, password } = req.body;
-
-  //err check
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required.' });
+// Route for user registration
+router.post('/signup', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = new User({ username, password });
+    await user.save();
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
   }
+});
 
-  //create it
-  const newUser = new User({ username, password });
-
-  //save the database
-  newUser.save((err, user) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error creating user.' });
+// Route for user login (authentication)
+router.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username, password });
+    if (user) {
+      res.status(200).json({ message: 'Login successful' });
+    } else {
+      res.status(401).json({ error: 'Authentication failed' });
     }
-    return res.status(201).json(user);
-  });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
+  }
 });
 
 module.exports = router;
