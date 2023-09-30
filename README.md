@@ -1,9 +1,11 @@
 # cmsc447project
 
-## To run the client application (go to its directory):
-## Then run `npm run dev`
+## How to run the app
 
-## To run the server application (go to its directory):
-## Then run `node app.js`
+To run the client application (go to its directory):
+Then run `npm run dev`
 
-## As of Sept. 30th, frontend and backend can interact
+To run the server application (go to its directory):
+Then run `node app.js`
+
+As of Sept. 30th, frontend and backend can interact
