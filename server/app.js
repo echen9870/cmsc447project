@@ -27,16 +27,16 @@ db.once('open', function () {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-console.log("line 48");
+//console.log("line 48");
 app.use(express.static(__dirname + '/views'));
 
-console.log("line 51");
+//console.log("line 51");
 var index = require('./routes/api/userRoutes'); 
-console.log("line 53");
+//console.log("line 53");
 app.use('/', index);
-console.log("line 54");
+//console.log("line 54");
 
-console.log("line 56");
+//console.log("line 56");
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('File Not Found');
@@ -44,7 +44,7 @@ app.use(function (req, res, next) {
   next(err);
 });
 
-console.log("line 64");
+//console.log("line 64");
 // error handler
 // define as the last app.use callback
 app.use(function (err, req, res, next) {
@@ -52,7 +52,7 @@ app.use(function (err, req, res, next) {
   res.send(err.message);
 });
 
-console.log("line 72");
+//console.log("line 72");
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, function () {
   console.log('Server is started on http://127.0.0.1:'+PORT);
