@@ -1,24 +1,39 @@
+import { useState } from "react";
 import Group from "../components/Group";
 import GroupInput from "../components/GroupInput";
 import TaskGroup from "../components/TaskGroup";
+import Calendar from "../components/Calendar";
 
-export const Dashboard = () => {
+interface Props {
+  onLogout: () => void;
+}
+
+export const Dashboard = ({ onLogout }: Props) => {
+  const [calendarView, setCalendarView] = useState(false);
+  const onToggle = () => {
+    setCalendarView(!calendarView);
+  };
+
   return (
-    <div className="flex h-screen bg-prismDarkPurple ">
+    <div className="flex flex-col h-screen bg-prismDarkPurple ">
       {/* Sidebar */}
-      <aside className=" w-1/4 p-4 text-gray-100">
-        <GroupInput></GroupInput>
-        <Group groupName="Group1"></Group>
-        <Group groupName="Group2"></Group>
-        <Group groupName="Group2"></Group>
-      </aside>
+      <div className="flex justify-end items-end outline outline-gray-400 p-4">
+        <button
+          onClick={onToggle}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md content-end"
+        >
+          {calendarView ? "Group" : "Calendar"}
+        </button>
+        <button
+          onClick={onLogout}
+          className="bg-red-500 text-white px-4 py-2 rounded-md content-end"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-4">
-        <>
-          <TaskGroup></TaskGroup>
-        </>
-      </main>
+      <div className="p-2">{calendarView ? <Calendar /> : <TaskGroup />}</div>
     </div>
   );
 };
