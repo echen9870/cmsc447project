@@ -9,8 +9,9 @@ const generateSecretKey = () => {
   return crypto.randomBytes(64).toString('hex');
 };
 
-//user registration
-router.post('/signup', async (req, res) => {
+// Route for user registration
+router.post('/create_user', async (req, res) => {
+  console.log(req.body);
   try {
     const { username, password } = req.body;
 
@@ -40,8 +41,8 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-//user login (authentication)
-router.post('/login', async (req, res) => {
+// Route for user login (authentication)
+router.post('/login_user', async (req, res) => {
   try {
     const { username, password } = req.body;
 

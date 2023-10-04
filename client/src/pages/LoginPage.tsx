@@ -1,7 +1,11 @@
 import { useState } from "react";
 import Axios from "axios"; // Import Axios - for backend interaction
 
-function LoginPage() {
+interface Props {
+  onLogin: () => void;
+}
+
+const LoginPage = ({ onLogin } :Props) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -20,23 +24,32 @@ function LoginPage() {
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
     const { username, password } = formData;
-
     try {
       if (isLogin) {
-        console.log(username);
-        // If it's a login, send a POST request to your login endpoint
-        const response = await Axios.post("http://localhost:3000/auth/login", {
-          username,
-          password,
-        });
-        console.log("Logged in:", response.data);
+        console.log(username, password);
+        const response = await Axios.post(
+          "http://localhost:3000/auth/login_user",
+          {
+            username,
+            password,
+          }
+        );
+        if (response.status === 200) {
+          onLogin();
+          console.log("Logged in:", response.data);
+        }
       } else {
         // If it's a sign-up, send a POST request to your sign-up endpoint
-        const response = await Axios.post("http://localhost:3000/auth/signup", {
-          username,
-          password,
-        });
-        console.log("Account created:", response.data);
+        const response = await Axios.post(
+          "http://localhost:3000/auth/create_user",
+          {
+            username,
+            password,
+          }
+        );
+        if (response.status === 200) {
+          console.log("Account created:", response.data);
+        }
       }
     } catch (error) {
       console.error("Error:", error);
@@ -88,6 +101,6 @@ function LoginPage() {
       </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

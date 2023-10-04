@@ -17,6 +17,12 @@ app.use(cors()); //needs cors to connect to frontend!!!
 // Use the auth routes
 app.use('/auth', authRoutes);
 
+// Group routes
+app.use('/group',groupRoutes);
+
+// Task routes
+app.use('/task',taskRoutes);
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
