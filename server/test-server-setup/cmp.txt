@@ -1,13 +1,31 @@
-curl -X POST -H "Content-Type: application/json" --data-binary "{\"username\": \"cat\", \"password\": \"123\"}" http://localhost:3000/auth/signup
-{"message":"User created successfully"}
+# tested user and task and group 
 
-_id :
-6517be09a5822b67e62dee0a
-username :
-"cat"
-password :
-"123"
-__v :
-0
+curl -X POST -H "Content-Type: application/json" -d '{ "username" : "aftertaskNgroup", "password": "pwd1", "email" : "email@gmail.com" }' http://localhost:3000/auth/create_user
+{"message":"User created successfully"}%  
 
-the server works, but don't know how to connect it with vite, right now
+{
+  username: 'aftertaskNgroup',
+  password: 'pwd1',
+  email: 'email@gmail.com'
+}
+
+curl -X POST -H "Content-Type: application/json" -d '{ "groupId": "6520425ab92023c0b1cb7559", "name": "Name", "description": "Task Description", "assignedUsers": ["6520449b520dc691f46f018a", "6518b90a6cbf70e664f05c69"], "completed": false, "createdAt": "2023-10-06T12:00:00.000Z", "dueAt": "2023-10-10T12:00:00.000Z" }' http://localhost:3000/task/create_task 
+{"message":"Task created successfully"}% 
+
+{
+  groupId: '6520425ab92023c0b1cb7559',
+  name: 'Name',
+  description: 'Task Description',
+  assignedUsers: [ '6520449b520dc691f46f018a', '6518b90a6cbf70e664f05c69' ],
+  completed: false,
+  createdAt: '2023-10-06T12:00:00.000Z',
+  dueAt: '2023-10-10T12:00:00.000Z'
+}
+
+curl -X POST -H "Content-Type: application/json" -d '{ "name": "Group Name", "members": "6518b90a6cbf70e664f05c69" }' http://localhost:3000/group/create_group
+{"message":"Group created successfully"}% 
+
+{ 
+  name: 'Group Name', 
+  members: '6518b90a6cbf70e664f05c69' 
+}

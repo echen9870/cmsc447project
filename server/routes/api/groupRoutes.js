@@ -25,7 +25,7 @@ router.get('/groups/:memberId', async (req, res) => {
 });
 
 //Post Request By Creating Group
-router.post('/create_task', async (req, res) => {
+router.post('/create_group', async (req, res) => {
     console.log(req.body);
     try {
       const { name, members } = req.body;

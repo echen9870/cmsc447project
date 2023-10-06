@@ -45,25 +45,25 @@ router.get('/get_task/:userId', async (req, res) => {
 
 //Post Request for Task Creation
 router.post('/create_task', async (req, res) => {
-    console.log(req.body);
-    try {
-      const { groupId, name, description, assignedUsers, completed, createdAt, dueAt } = req.body;
-  
-      //validate input
-      if (!groupId || !name) {
-        return res.status(400).json({ error: 'Group id and task name are required' });
-      }
+  console.log(req.body);
+  try {
+    const { groupId, name, description, assignedUsers, completed, createdAt, dueAt } = req.body;
 
-      //save task
-      const task = new Task({ groupId, name, description, assignedUsers, completed, createdAt, dueAt });
-      await task.save();
+    //validate input
+    //if (!groupId || !name) {
+      //return res.status(400).json({ error: 'Group id and task name are required' });
+    //}
 
-      res.status(201).json({ message: 'Task created successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'An error occurred' });
-    }
-  });
+    //save task
+    const task = new Task({ groupId, name, description, assignedUsers, completed, createdAt, dueAt });
+    await task.save();
+
+    res.status(201).json({ message: 'Task created successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 // Put Request for Task Editing
 router.put('/edit_task/:taskId', async (req, res) => {

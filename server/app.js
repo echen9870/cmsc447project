@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/api/userRoutes'); 
+const groupRoutes = require('./routes/api/groupRoutes'); 
+const taskRoutes = require('./routes/api/taskRoutes'); 
 const app = express();
 const cors = require("cors");
 
