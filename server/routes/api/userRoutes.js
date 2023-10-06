@@ -13,11 +13,11 @@ const generateSecretKey = () => {
 router.post('/create_user', async (req, res) => {
   console.log(req.body);
   try {
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
 
     //validate input
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required' });
+    if (!username || !password || !email) {
+      return res.status(400).json({ error: 'Username, email, and password are required' });
     }
 
     //check if user already exists
@@ -27,11 +27,18 @@ router.post('/create_user', async (req, res) => {
       return res.status(409).json({ error: 'Username already exists' });
     }
 
+    //check if email already exists
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      console.log("Email already exists");
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+
     //hash password before saving it
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const user = new User({ username, password: hashedPassword });
+    const user = new User({ username, password: hashedPassword, email });
     await user.save();
 
     res.status(201).json({ message: 'User created successfully' });
