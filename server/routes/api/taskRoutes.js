@@ -24,7 +24,24 @@ router.get('/get_task', function (req, res, next) {
   });
 });
 
-//Get Request By UserID
+// Get Request By UserID
+router.get('/get_task/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find tasks assigned to the specified user
+    const tasks = await Task.find({ assignedUsers: userId }).populate('groupId');
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({ message: "No tasks found for the user" });
+    }
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 //Post Request for Task Creation
 router.post('/create_task', async (req, res) => {
@@ -48,6 +65,42 @@ router.post('/create_task', async (req, res) => {
     }
   });
 
-//Put Request for Task Editing
+// Put Request for Task Editing
+router.put('/edit_task/:taskId', async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
 
-//Delete Request for Task Deleting
+    // Find the task by taskId and update it
+    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, { new: true });
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+// Delete Request for Task Deleting
+router.delete('/delete_task/:taskId', async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+
+    // Find the task by taskId and delete it
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json({ message: 'Task deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+module.exports = router;
