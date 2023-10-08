@@ -3,9 +3,10 @@ import Task from "./Task";
 
 interface Props {
   groupID: string;
+  isOwner: boolean;
 }
 
-const Tasklist = ({ groupID }: Props) => {
+const Tasklist = ({ groupID,isOwner }: Props) => {
   const [tasks, setTasks] = useState<string[]>([]);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const Tasklist = ({ groupID }: Props) => {
 
   return (
     <>
-
+    <h1 className="text-white">{groupID}</h1>
     </>
   );
 };

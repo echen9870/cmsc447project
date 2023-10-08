@@ -18,26 +18,50 @@ interface Group {
 
 const TaskGroup = ({ username }: Props) => {
   const [listOfGroup, setListOfGroup] = useState<Group[]>([]);
-  const [groupID, setGroupID] = useState("test");
+  const [currentGroupInfo, setCurrentGroupInfo] = useState({
+    groupID: "",
+    isOwner: false,
+  });
+
   const formData = {
     name: "Group",
     usernameList: [username],
   };
 
-  const getGroupIDs = async () => {
+  const getListOfGroupIDs = async () => {
     try {
       const response = await Axios.get(
         `http://localhost:3000/group/get_groups/${username}`
       );
       setListOfGroup(response.data);
-      console.log("Use effect");
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
+  const onGroupChange = async (groupID: string) => {
+    try {
+      const response = await Axios.get(
+        `http://localhost:3000/group/check_owner/${username}/${groupID}`
+      );
+      if (response.data.message === "User is owner") {
+        setCurrentGroupInfo({
+          groupID,
+          isOwner: true,
+        });
+      } else {
+        setCurrentGroupInfo({
+          groupID,
+          isOwner: false,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching group ownership info:", error);
+    }
+  };
+
   useEffect(() => {
-    getGroupIDs();
+    getListOfGroupIDs();
   }, []);
 
   const handleGroupAdd = async () => {
@@ -54,13 +78,25 @@ const TaskGroup = ({ username }: Props) => {
     } catch (error) {
       console.error("Error:", error);
     }
-    getGroupIDs();
+    getListOfGroupIDs();
   };
 
-  const onGroupChange = () => {};
+  const handleGroupDelete = async (groupID: string) => {
+    try {
+      const response = await Axios.delete(
+        `http://localhost:3000/group/delete_group/${groupID}`
+      );
+      console.log(response);
+      await getListOfGroupIDs();
+      setCurrentGroupInfo({ groupID: "", isOwner: false });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <div className="flex">
+      {/*Sidebar*/}
       <aside className="w-1/5 p-2 pr-7 pb-40 text-white h-screen  overflow-y-scroll">
         <button
           className=" w-full border-solid border-2 rounded-md bg-prismGroupInput border-gray-500 p-4 m-2"
@@ -72,15 +108,27 @@ const TaskGroup = ({ username }: Props) => {
           <button
             className=" w-full block border-solid border-2 rounded-md border-gray-500 p-2 m-2"
             key={group._id}
+            onClick={() => onGroupChange(group._id)}
           >
             {group.name}
           </button>
         ))}
       </aside>
+
       <main className="flex-1 p-4 hover:overflow-y-scroll">
-        <TaskHeader></TaskHeader>
-        <TaskList groupID={groupID}></TaskList>
-        <Social></Social>
+        {currentGroupInfo.groupID && (
+          <TaskHeader
+            groupID={currentGroupInfo.groupID}
+            isOwner={currentGroupInfo.isOwner}
+            onGroupDelete={() => handleGroupDelete(currentGroupInfo.groupID)}
+          ></TaskHeader>
+        )}
+        {currentGroupInfo.groupID && (
+          <TaskList
+            groupID={currentGroupInfo.groupID}
+            isOwner={currentGroupInfo.isOwner}
+          ></TaskList>
+        )}
       </main>
     </div>
   );

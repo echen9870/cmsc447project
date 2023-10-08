@@ -16,13 +16,24 @@ router.get("/get_groups/:username", async (req, res) => {
       "name",
       "_id"
     );
-    if (!groups || groups.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No groups found for the given MemberID." });
-    }
-
     res.status(200).json(groups);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+//Get request that checks if the userid we gave is the owner of the group
+router.get("/check_owner/:username/:groupID", async (req, res) => {
+  const username = req.params.username;
+  const user = await User.findOne({ username: username });
+  const groupID = req.params.groupID;
+  const group = await Group.findOne({ _id: groupID });
+  try {
+    if (user._id.toString() == group.owner.toString()) {
+      return res.status(201).json({ message: "User is owner" });
+    } else {
+      return res.status(404).json({ message: "User is not owner" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -44,8 +55,9 @@ router.post("/create_group", async (req, res) => {
       const user = await User.findOne({ username });
       members.push(user._id);
     }
+    const owner = members[0];
     //save group
-    const group = new Group({ name, members });
+    const group = new Group({ name, members, owner });
     await group.save();
 
     res.status(201).json({ message: "Group created successfully" });
@@ -106,12 +118,11 @@ router.put("/groups/:groupId", async (req, res) => {
 });
 
 // DELETE request to delete a Group
-router.delete("/groups/:groupId", async (req, res) => {
-  const groupId = req.params.groupId;
-
+router.delete("/delete_group/:groupId", async (req, res) => {
+  const groupID = req.params.groupId;
+  console.log(groupID);
   try {
-    const group = await Group.findByIdAndRemove(groupId);
-
+    const group = await Group.findByIdAndRemove(groupID);
     if (!group) {
       return res.status(404).json({ message: "Group not found." });
     }

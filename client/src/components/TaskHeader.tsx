@@ -1,6 +1,12 @@
 import TaskInput from "./TaskInput";
 
-const Taskheader = () => {
+interface Props {
+  groupID: string;
+  isOwner: boolean;
+  onGroupDelete: (groupID:string) => {} ;
+}
+
+const Taskheader = ({ groupID,isOwner,onGroupDelete }: Props ) => {
   return (
     <>
       <div className="bg-prismDarkPurple content-right">
@@ -14,6 +20,9 @@ const Taskheader = () => {
         <button className="bg-red-500  text-white m-2 py-1 px-2 rounded">
           Delete All
         </button>
+        {isOwner && <button className="bg-red-500  text-white m-2 py-1 px-2 rounded" onClick = {() => onGroupDelete(groupID)}>
+          Delete Group
+        </button>}
       </div>
     </>
   );
