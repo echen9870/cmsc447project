@@ -96,13 +96,13 @@ router.put("/groups/:groupId/users/:userId", async (req, res) => {
 });
 
 // PUT request to edit the Group Name
-router.put("/groups/:groupId", async (req, res) => {
+router.put("/edit_group_name/:groupId/:groupName", async (req, res) => {
   const groupId = req.params.groupId;
-
+  const newName = req.params.groupName;
   try {
     const group = await Group.findByIdAndUpdate(
       groupId,
-      { name: req.body.newName },
+      { name: newName },
       { new: true }
     );
 

@@ -1,4 +1,3 @@
-import Social from "./Social";
 import TaskHeader from "./TaskHeader";
 import TaskList from "./TaskList";
 import Group from "./Group";
@@ -94,6 +93,19 @@ const TaskGroup = ({ username }: Props) => {
     }
   };
 
+  const handleGroupNameChange = async (groupID:string, groupNewName:string) => {
+    try {
+      const response = await Axios.put(
+        `http://localhost:3000/group/edit_group_name/${groupID}/${groupNewName}`
+      );
+      console.log(response);
+      await getListOfGroupIDs();
+      setCurrentGroupInfo({ groupID: "", isOwner: false });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="flex">
       {/*Sidebar*/}
@@ -120,6 +132,7 @@ const TaskGroup = ({ username }: Props) => {
           <TaskHeader
             groupID={currentGroupInfo.groupID}
             isOwner={currentGroupInfo.isOwner}
+            onGroupNameChange={handleGroupNameChange}
             onGroupDelete={() => handleGroupDelete(currentGroupInfo.groupID)}
           ></TaskHeader>
         )}
