@@ -20,3 +20,7 @@
 .expandContent {
   @apply flex-grow flex flex-col;
 }
+
+.createGroupButton {
+  @apply border-solid border-2 rounded-md bg-prismGroupInput border-gray-500 p-4 m-2;
+}

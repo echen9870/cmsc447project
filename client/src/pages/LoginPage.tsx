@@ -2,13 +2,16 @@ import { useState } from "react";
 import Axios from "axios"; // Import Axios - for backend interaction
 
 interface Props {
-  onLogin: () => void;
+  onLogin: (username:string) => void;
+
 }
 
-const LoginPage = ({ onLogin } :Props) => {
+const LoginPage = ({ onLogin }: Props) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
+    email: "",
+    confirmPassword: "",
   });
 
   const [isLogin, setIsLogin] = useState(true);
@@ -23,10 +26,9 @@ const LoginPage = ({ onLogin } :Props) => {
 
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    const { username, password } = formData;
+    const { username, password, email, confirmPassword } = formData;
     try {
       if (isLogin) {
-        console.log(username, password);
         const response = await Axios.post(
           "http://localhost:3000/auth/login_user",
           {
@@ -35,7 +37,7 @@ const LoginPage = ({ onLogin } :Props) => {
           }
         );
         if (response.status === 200) {
-          onLogin();
+          onLogin(username);
           console.log("Logged in:", response.data);
         }
       } else {
@@ -45,11 +47,11 @@ const LoginPage = ({ onLogin } :Props) => {
           {
             username,
             password,
+            email,
+            confirmPassword,
           }
         );
-        if (response.status === 200) {
-          console.log("Account created:", response.data);
-        }
+        console.log(response);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -66,6 +68,18 @@ const LoginPage = ({ onLogin } :Props) => {
         <h2 className="text-2xl mb-4">{isLogin ? "Login" : "Sign Up"}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
+            {!isLogin && (
+              <>
+                <label className="block">Email</label>
+                <input
+                  type="text"
+                  name="email"
+                  onChange={handleInputChange}
+                  className="w-full p-2 rounded text-gray-800"
+                  required
+                />
+              </>
+            )}
             <label className="block">Username</label>
             <input
               type="text"
@@ -74,8 +88,6 @@ const LoginPage = ({ onLogin } :Props) => {
               className="w-full p-2 rounded text-gray-800"
               required
             />
-          </div>
-          <div className="mb-4">
             <label className="block ">Password</label>
             <input
               type="password"
@@ -84,7 +96,20 @@ const LoginPage = ({ onLogin } :Props) => {
               className="w-full p-2 rounded text-gray-800"
               required
             />
+            {!isLogin && (
+              <>
+                <label className="block">Confirm Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  onChange={handleInputChange}
+                  className="w-full p-2 rounded text-gray-800"
+                  required
+                />
+              </>
+            )}
           </div>
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white p-2 rounded"

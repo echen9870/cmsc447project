@@ -14,17 +14,14 @@ const Tasklist = ({ groupID }: Props) => {
 
   const fetchTasks = async (groupID: string) => {
     /*Get the list of tasks with the groupNumber*/
-    const res: string[] = ["Task1", "Task2"];
-    setTasks(res);
+    setTasks([]);
   };
 
   const deleteTasks: (taskNumber: number) => void = () => {};
 
   return (
     <>
-      {tasks.map((task) => (
-        <Task taskName={task}></Task>
-      ))}
+
     </>
   );
 };
