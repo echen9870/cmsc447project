@@ -1,14 +1,14 @@
 import { useState } from "react";
-import TaskInput from "./TaskInput";
 
 interface Props {
   groupID: string;
   isOwner: boolean;
   onGroupDelete: (groupID:string) => {};
   onGroupNameChange:(groupID:string,newGroupName:string)=>{};
+  onTaskAdd:(groupID:string) => {};
 }
 
-const Taskheader = ({ groupID,isOwner,onGroupDelete,onGroupNameChange }: Props ) => {
+const Taskheader = ({ groupID,isOwner,onGroupDelete,onGroupNameChange,onTaskAdd }: Props ) => {
 
   const [changeNameView,setChangeNameView] = useState(false);
   const [newName,setNewName] = useState("");
@@ -16,7 +16,9 @@ const Taskheader = ({ groupID,isOwner,onGroupDelete,onGroupNameChange }: Props )
   return (
     <>
       <div className="bg-prismDarkPurple content-right">
-        <TaskInput></TaskInput>
+      <button className="bg-green-500 text-white m-2 py-1 px-2 rounded" onClick = { () => onTaskAdd(groupID)}>
+          Add Task
+        </button>
         <button className="bg-blue-500 text-white m-2 py-1 px-2 rounded">
           Finish All
         </button>

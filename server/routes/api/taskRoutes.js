@@ -7,30 +7,35 @@
 //Task Notes : String
 //Completed : Bool
 //Assigned ID : UserID[]
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var Task = require('../../models/taskModel');
+var Task = require("../../models/taskModel");
 
 //Post Request
 
 //Get Request By GroupID
-router.get('/get_task', function (req, res, next) {
-	const task = Task.findOne({groupId: req.body.groupId}, function(err,data) {
-    if (!data) {
-      return res.status(404).json({message: "task not found"});
-    } else {
-      return res.status(200).json(task);
-    }
-  });
+router.get("/get_task_group/:groupID", async (req, res) => {
+  try {
+    const groupID = req.params.groupID;
+    console.log(groupID);
+    const tasks = await Task.find({ groupId: groupID });
+    console.log(tasks);
+    return res.status(200).json(tasks);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 // Get Request By UserID
-router.get('/get_task/:userId', async (req, res) => {
+router.get("/get_task/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
 
     // Find tasks assigned to the specified user
-    const tasks = await Task.find({ assignedUsers: userId }).populate('groupId');
+    const tasks = await Task.find({ assignedUsers: userId }).populate(
+      "groupId"
+    );
 
     if (!tasks || tasks.length === 0) {
       return res.status(404).json({ message: "No tasks found for the user" });
@@ -39,39 +44,50 @@ router.get('/get_task/:userId', async (req, res) => {
     res.status(200).json(tasks);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: "An error occurred" });
   }
 });
 
 //Post Request for Task Creation
-router.post('/create_task', async (req, res) => {
+router.post("/create_task", async (req, res) => {
   console.log(req.body);
   try {
-    const { groupId, name, description, assignedUsers, completed, createdAt, dueAt } = req.body;
-
-    //validate input
-    //if (!groupId || !name) {
-      //return res.status(400).json({ error: 'Group id and task name are required' });
-    //}
-
-    //save task
-    const task = new Task({ groupId, name, description, assignedUsers, completed, createdAt, dueAt });
+    const {
+      groupId,
+      name,
+      description,
+      assignedUsers,
+      completed,
+      createdAt,
+      dueAt,
+    } = req.body;
+    const task = new Task({
+      groupId,
+      name,
+      description,
+      assignedUsers,
+      completed,
+      createdAt,
+      dueAt,
+    });
     await task.save();
 
-    res.status(201).json({ message: 'Task created successfully' });
+    res.status(201).json({ message: "Task created successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: "An error occurred" });
   }
 });
 
 // Put Request for Task Editing
-router.put('/edit_task/:taskId', async (req, res) => {
+router.put("/edit_task/:taskId", async (req, res) => {
   try {
     const taskId = req.params.taskId;
 
     // Find the task by taskId and update it
-    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, { new: true });
+    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, {
+      new: true,
+    });
 
     if (!updatedTask) {
       return res.status(404).json({ message: "Task not found" });
@@ -80,12 +96,12 @@ router.put('/edit_task/:taskId', async (req, res) => {
     res.status(200).json(updatedTask);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: "An error occurred" });
   }
 });
 
 // Delete Request for Task Deleting
-router.delete('/delete_task/:taskId', async (req, res) => {
+router.delete("/delete_task/:taskId", async (req, res) => {
   try {
     const taskId = req.params.taskId;
 
@@ -96,10 +112,10 @@ router.delete('/delete_task/:taskId', async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    res.status(200).json({ message: 'Task deleted successfully' });
+    res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: "An error occurred" });
   }
 });
 

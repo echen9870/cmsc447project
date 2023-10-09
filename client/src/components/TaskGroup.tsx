@@ -1,9 +1,8 @@
 import TaskHeader from "./TaskHeader";
-import TaskList from "./TaskList";
 import Group from "./Group";
-import GroupInput from "./GroupInput";
 import { useEffect, useState } from "react";
-import Axios, { AxiosResponse } from "axios";
+import Axios from "axios";
+import Task from "./Task";
 
 interface Props {
   username: string;
@@ -14,17 +13,37 @@ interface Group {
   name: string;
   members: [];
 }
+interface Task {
+  groupId: string;
+  name: string;
+  description: string;
+  assignedUsers: [];
+  completed: boolean;
+  createdAt: string;
+  dueAt: string;
+}
 
 const TaskGroup = ({ username }: Props) => {
   const [listOfGroup, setListOfGroup] = useState<Group[]>([]);
   const [currentGroupInfo, setCurrentGroupInfo] = useState({
     groupID: "",
     isOwner: false,
+    tasks: [],
   });
 
   const formData = {
     name: "Group",
     usernameList: [username],
+  };
+
+  const newTask = {
+    groupId: currentGroupInfo.groupID,
+    name: "Task",
+    description: "",
+    assignedUsers: [],
+    completed: false,
+    createdAt: "",
+    dueAt: "",
   };
 
   const getListOfGroupIDs = async () => {
@@ -39,7 +58,12 @@ const TaskGroup = ({ username }: Props) => {
   };
 
   const onGroupChange = async (groupID: string) => {
+    console.log(groupID);
     try {
+      const taskResponse = await Axios.get(
+        `http://localhost:3000/task/get_task_group/${groupID}`
+      );
+      const tasks = taskResponse.data;
       const response = await Axios.get(
         `http://localhost:3000/group/check_owner/${username}/${groupID}`
       );
@@ -47,11 +71,13 @@ const TaskGroup = ({ username }: Props) => {
         setCurrentGroupInfo({
           groupID,
           isOwner: true,
+          tasks: tasks,
         });
       } else {
         setCurrentGroupInfo({
           groupID,
           isOwner: false,
+          tasks: tasks,
         });
       }
     } catch (error) {
@@ -87,20 +113,44 @@ const TaskGroup = ({ username }: Props) => {
       );
       console.log(response);
       await getListOfGroupIDs();
-      setCurrentGroupInfo({ groupID: "", isOwner: false });
+      setCurrentGroupInfo({ groupID: "", isOwner: false, tasks: [] });
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  const handleGroupNameChange = async (groupID:string, groupNewName:string) => {
+  const handleGroupNameChange = async (
+    groupID: string,
+    groupNewName: string
+  ) => {
     try {
-      const response = await Axios.put(
+      const response = await Axios.post(
         `http://localhost:3000/group/edit_group_name/${groupID}/${groupNewName}`
       );
       console.log(response);
       await getListOfGroupIDs();
-      setCurrentGroupInfo({ groupID: "", isOwner: false });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleOnTaskAdd = async () => {
+    try {
+      const response = await Axios.post(
+        `http://localhost:3000/task/create_task`,
+        newTask
+      );
+      const taskResponse = await Axios.get(
+        `http://localhost:3000/task/get_task_group/${currentGroupInfo.groupID}`
+      );
+      const tasks = taskResponse.data;
+      
+      setCurrentGroupInfo((prevGroupInfo) => ({
+        ...prevGroupInfo,
+        tasks: tasks,
+      }));
+
+      console.log(response);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -134,14 +184,14 @@ const TaskGroup = ({ username }: Props) => {
             isOwner={currentGroupInfo.isOwner}
             onGroupNameChange={handleGroupNameChange}
             onGroupDelete={() => handleGroupDelete(currentGroupInfo.groupID)}
+            onTaskAdd={() => handleOnTaskAdd()}
           ></TaskHeader>
         )}
-        {currentGroupInfo.groupID && (
-          <TaskList
-            groupID={currentGroupInfo.groupID}
-            isOwner={currentGroupInfo.isOwner}
-          ></TaskList>
-        )}
+        {currentGroupInfo.tasks &&
+          currentGroupInfo.tasks &&
+          (currentGroupInfo.tasks as Task[]).map((task) => (
+            <Task taskName={task.name}></Task>
+          ))}
       </main>
     </div>
   );
