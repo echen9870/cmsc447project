@@ -5,15 +5,17 @@ import LoginPage from "./pages/LoginPage";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-
-  const handleLoginInOut = () => {
+  const [username, setUsername] = useState("");
+  const handleLoginInOut = (username:string) => {
     setLoggedIn(!loggedIn);
+    setUsername(username);
+
   };
 
   return (
-    <div>
+    <div className = "overflow-hidden">
       {loggedIn ? (
-        <Dashboard onLogout={handleLoginInOut}/> // Render the Dashboard component if loggedIn is true
+        <Dashboard onLogout={handleLoginInOut} username = {username}/> // Render the Dashboard component if loggedIn is true
       ) : (
         <LoginPage onLogin={handleLoginInOut} /> // Render the LoginPage component if loggedIn is false
       )}
