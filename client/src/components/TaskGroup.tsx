@@ -13,8 +13,9 @@ interface Group {
   name: string;
   members: [];
 }
+
 interface Task {
-  _id:string,
+  _id: string;
   groupId: string;
   name: string;
   description: string;
@@ -46,33 +47,26 @@ const TaskGroup = ({ username }: Props) => {
     createdAt: "",
     dueAt: "",
   };
-    //State change function for currentGroupInfo
-    const onGroupChange = async (groupID: string) => {
-      try {
-        const taskResponse = await Axios.get(
-          `http://localhost:3000/task/get_task_group/${groupID}`
-        );
-        const tasks = taskResponse.data;
-        const response = await Axios.get(
-          `http://localhost:3000/group/check_owner/${username}/${groupID}`
-        );
-        if (response.data.message === "User is owner") {
-          setCurrentGroupInfo({
-            groupID,
-            isOwner: true,
-            tasks: tasks,
-          });
-        } else {
-          setCurrentGroupInfo({
-            groupID,
-            isOwner: false,
-            tasks: tasks,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching group ownership info:", error);
-      }
-    };
+
+  //State change function for currentGroupInfo
+  const onGroupChange = async (groupID: string) => {
+    try {
+      const taskResponse = await Axios.get(
+        `http://localhost:3000/task/get_task_group/${groupID}`
+      );
+      const tasks = taskResponse.data;
+      const response = await Axios.get(
+        `http://localhost:3000/group/check_owner/${username}/${groupID}`
+      );
+      setCurrentGroupInfo({
+        groupID,
+        isOwner: response.data.message === "User is owner",
+        tasks: tasks,
+      });
+    } catch (error) {
+      console.error("Error fetching group ownership info:", error);
+    }
+  };
 
   //Gets the list of groups the user is part of
   const getListOfGroupIDs = async () => {
@@ -169,7 +163,6 @@ const TaskGroup = ({ username }: Props) => {
     }
   };
 
-
   return (
     <div className="flex">
       {/*Sidebar*/}
@@ -204,7 +197,7 @@ const TaskGroup = ({ username }: Props) => {
         {currentGroupInfo.tasks &&
           currentGroupInfo.tasks &&
           (currentGroupInfo.tasks as Task[]).map((task) => (
-            <Task taskID = {task._id}taskName={task.name} onTaskRefresh={handleRefreshTask}></Task>
+            <Task key = {task._id} {...task} onTaskRefresh={handleRefreshTask}></Task>
           ))}
       </main>
     </div>

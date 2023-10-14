@@ -78,14 +78,15 @@ router.post("/create_task", async (req, res) => {
 });
 
 // Put Request for Task Editing
-router.put("/edit_task/:taskId", async (req, res) => {
+router.put("/edit_task", async (req, res) => {
   try {
-    const taskId = req.params.taskId;
-
+    const { _id, ...taskData } = req.body;
     // Find the task by taskId and update it
-    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, {
-      new: true,
-    });
+    const updatedTask = await Task.findByIdAndUpdate(
+      _id,
+      { $set: { ...taskData } },
+      { new: true }
+    );
 
     if (!updatedTask) {
       return res.status(404).json({ message: "Task not found" });
