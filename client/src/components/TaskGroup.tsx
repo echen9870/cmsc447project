@@ -14,6 +14,7 @@ interface Group {
   members: [];
 }
 interface Task {
+  _id:string,
   groupId: string;
   name: string;
   description: string;
@@ -45,7 +46,35 @@ const TaskGroup = ({ username }: Props) => {
     createdAt: "",
     dueAt: "",
   };
+    //State change function for currentGroupInfo
+    const onGroupChange = async (groupID: string) => {
+      try {
+        const taskResponse = await Axios.get(
+          `http://localhost:3000/task/get_task_group/${groupID}`
+        );
+        const tasks = taskResponse.data;
+        const response = await Axios.get(
+          `http://localhost:3000/group/check_owner/${username}/${groupID}`
+        );
+        if (response.data.message === "User is owner") {
+          setCurrentGroupInfo({
+            groupID,
+            isOwner: true,
+            tasks: tasks,
+          });
+        } else {
+          setCurrentGroupInfo({
+            groupID,
+            isOwner: false,
+            tasks: tasks,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching group ownership info:", error);
+      }
+    };
 
+  //Gets the list of groups the user is part of
   const getListOfGroupIDs = async () => {
     try {
       const response = await Axios.get(
@@ -57,38 +86,11 @@ const TaskGroup = ({ username }: Props) => {
     }
   };
 
-  const onGroupChange = async (groupID: string) => {
-    console.log(groupID);
-    try {
-      const taskResponse = await Axios.get(
-        `http://localhost:3000/task/get_task_group/${groupID}`
-      );
-      const tasks = taskResponse.data;
-      const response = await Axios.get(
-        `http://localhost:3000/group/check_owner/${username}/${groupID}`
-      );
-      if (response.data.message === "User is owner") {
-        setCurrentGroupInfo({
-          groupID,
-          isOwner: true,
-          tasks: tasks,
-        });
-      } else {
-        setCurrentGroupInfo({
-          groupID,
-          isOwner: false,
-          tasks: tasks,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching group ownership info:", error);
-    }
-  };
-
   useEffect(() => {
     getListOfGroupIDs();
   }, []);
 
+  //Creating a new group
   const handleGroupAdd = async () => {
     const { name, usernameList } = formData;
     try {
@@ -106,6 +108,7 @@ const TaskGroup = ({ username }: Props) => {
     getListOfGroupIDs();
   };
 
+  //Deleting a group
   const handleGroupDelete = async (groupID: string) => {
     try {
       const response = await Axios.delete(
@@ -119,12 +122,13 @@ const TaskGroup = ({ username }: Props) => {
     }
   };
 
+  //Changing the group name
   const handleGroupNameChange = async (
     groupID: string,
     groupNewName: string
   ) => {
     try {
-      const response = await Axios.post(
+      const response = await Axios.put(
         `http://localhost:3000/group/edit_group_name/${groupID}/${groupNewName}`
       );
       console.log(response);
@@ -134,27 +138,37 @@ const TaskGroup = ({ username }: Props) => {
     }
   };
 
+  //Refresh tasks a task used when we need to create/delete/edit tasks
+  const handleRefreshTask = async () => {
+    try {
+      const taskResponse = await Axios.get(
+        `http://localhost:3000/task/get_task_group/${currentGroupInfo.groupID}`
+      );
+      const tasks = taskResponse.data;
+      setCurrentGroupInfo((prevGroupInfo) => ({
+        ...prevGroupInfo,
+        tasks: tasks,
+      }));
+      console.log(taskResponse);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  //Creating a new task
   const handleOnTaskAdd = async () => {
     try {
       const response = await Axios.post(
         `http://localhost:3000/task/create_task`,
         newTask
       );
-      const taskResponse = await Axios.get(
-        `http://localhost:3000/task/get_task_group/${currentGroupInfo.groupID}`
-      );
-      const tasks = taskResponse.data;
-      
-      setCurrentGroupInfo((prevGroupInfo) => ({
-        ...prevGroupInfo,
-        tasks: tasks,
-      }));
-
+      await handleRefreshTask();
       console.log(response);
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
 
   return (
     <div className="flex">
@@ -190,7 +204,7 @@ const TaskGroup = ({ username }: Props) => {
         {currentGroupInfo.tasks &&
           currentGroupInfo.tasks &&
           (currentGroupInfo.tasks as Task[]).map((task) => (
-            <Task taskName={task.name}></Task>
+            <Task taskID = {task._id}taskName={task.name} onTaskRefresh={handleRefreshTask}></Task>
           ))}
       </main>
     </div>

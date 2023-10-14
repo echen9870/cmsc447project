@@ -17,9 +17,7 @@ var Task = require("../../models/taskModel");
 router.get("/get_task_group/:groupID", async (req, res) => {
   try {
     const groupID = req.params.groupID;
-    console.log(groupID);
     const tasks = await Task.find({ groupId: groupID });
-    console.log(tasks);
     return res.status(200).json(tasks);
   } catch (err) {
     console.error(err);

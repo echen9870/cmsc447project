@@ -1,13 +1,29 @@
 import { useState } from "react";
 import "./Components.css";
+import Axios from "axios";
 
 interface Props {
   taskName: string;
+  taskID:string;
+  onTaskRefresh : () => void;
 }
 
-const Task = ({ taskName }: Props) => {
+const Task = ({ taskID,taskName,onTaskRefresh }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleExpandClick = () => setIsExpanded(!isExpanded);
+
+  const onTaskDelete =  async (taskID:string) => {
+    try {
+      const response = await Axios.delete(
+        `http://localhost:3000/task/delete_task/${taskID}`,
+      );
+      console.log(response);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    onTaskRefresh();
+  }
+
   return (
     <>
       <div className="task flex flex-col">
@@ -16,7 +32,7 @@ const Task = ({ taskName }: Props) => {
         <div className="d-flex">
           <button className="finishButton">Finish</button>
           <button className="editButton">Edit</button>
-          <button className="deleteButton">Delete</button>
+          <button className="deleteButton" onClick ={() => onTaskDelete(taskID)} >Delete</button>
           <button className="expandButton" onClick={handleExpandClick}>
             {isExpanded ? "Collapse" : "Expand"}
           </button>
