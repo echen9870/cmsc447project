@@ -81,6 +81,7 @@ router.post("/create_task", async (req, res) => {
 router.put("/edit_task", async (req, res) => {
   try {
     const { _id, ...taskData } = req.body;
+    console.log(taskData)
     // Find the task by taskId and update it
     const updatedTask = await Task.findByIdAndUpdate(
       _id,

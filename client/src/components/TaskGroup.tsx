@@ -44,7 +44,7 @@ const TaskGroup = ({ username }: Props) => {
     description: "",
     assignedUsers: [],
     completed: false,
-    createdAt: "",
+    createdAt: new Date().toLocaleDateString,
     dueAt: "",
   };
 

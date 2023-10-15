@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import "./Components.css";
 import Axios from "axios";
 
@@ -26,8 +26,27 @@ const Task = (task: Props) => {
   const handleExpandClick = () => setIsExpanded(!isExpanded);
   const handleEditTask = () => setIsEdit(!isEdit);
 
+  //Used to make sure our description text box automatically is the size needed to display all the information in the text box
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (isExpanded && textAreaRef.current) {
+      textAreaRef.current.style.height = "auto"; // Reset the height to auto
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set the height based on the scroll height
+    }
+  }, [isExpanded]);
+
+  const handleFinish = () => {
+    setCurTask((prev) => ({
+      ...prev,
+      ["completed"]: !curTask.completed,
+    }));
+    handleEditTaskSubmit();
+  };
+
   //Saving changes to our task
-  const handleTaskEdit = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTaskEdit = async (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = event.target;
     setCurTask((prev) => ({
       ...prev,
@@ -61,12 +80,13 @@ const Task = (task: Props) => {
       console.error("Error:", error);
     }
     task.onTaskRefresh();
-    setIsEdit(!isEdit);
+    setIsEdit(false);
   };
 
   return (
     <>
       <div className="task flex flex-col">
+        {/*Task Name Section*/}
         {isEdit ? (
           <input
             name="name"
@@ -78,9 +98,24 @@ const Task = (task: Props) => {
         ) : (
           <b className="flex-1 justify-center">{curTask.name}</b>
         )}
-        <p className="text-xs text-gray-400">Due by 9/25</p>
+
+        {/*Task DueAt Section*/}
+        {isEdit ? (
+          <input
+            type="date"
+            name="dueAt"
+            className="text-black"
+            value={curTask.dueAt}
+            onChange={(e) => handleTaskEdit(e)}
+          ></input>
+        ) : (
+          <p className="text-xs text-gray-400">Due By: {curTask.dueAt}</p>
+        )}
+        {/*Task Buttons Section*/}
         <div className="d-flex">
-          <button className="finishButton">Finish</button>
+          <button className="finishButton" onClick={handleFinish}>
+            {task.completed ? "Unfinish" : "Finish"}
+          </button>
           {isEdit ? (
             <button className="editButton" onClick={handleEditTaskSubmit}>
               Confirm
@@ -97,13 +132,28 @@ const Task = (task: Props) => {
             {isExpanded ? "Collapse" : "Expand"}
           </button>
         </div>
+        {/*Task Expanded Section*/}
         {isExpanded && (
           <div className="expandContent">
+            {/*Task Assigned Section*/}
             <p>Assigned to: John Doe</p>
+
+            {/*Task Notes Section*/}
             <textarea
-              className="flex-grow bg-prismPurple outline-gray-400 hover:border-2 text-gray-100"
+              ref={textAreaRef}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                handleTaskEdit(e);
+                if (textAreaRef.current) {
+                  textAreaRef.current.style.height = "auto"; // Reset the height to auto
+                  textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set the height based on the scroll height
+                }
+              }}
+              name="description"
+              onBlur={handleEditTaskSubmit}
+              className="flex-grow bg-prismPurple outline-gray-400 hover:border-2 text-gray-100 resize-none overflow-hidden"
               placeholder="Add notes"
-            ></textarea>
+              defaultValue={task.description}
+            />
           </div>
         )}
       </div>
