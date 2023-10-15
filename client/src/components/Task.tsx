@@ -33,7 +33,7 @@ const Task = (task: Props) => {
       textAreaRef.current.style.height = "auto"; // Reset the height to auto
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set the height based on the scroll height
     }
-  }, [isExpanded]);
+  }, [isExpanded, textAreaRef.current, curTask.description]);
 
   const handleFinish = () => {
     setCurTask((prev) => ({
@@ -143,10 +143,6 @@ const Task = (task: Props) => {
               ref={textAreaRef}
               onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                 handleTaskEdit(e);
-                if (textAreaRef.current) {
-                  textAreaRef.current.style.height = "auto"; // Reset the height to auto
-                  textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set the height based on the scroll height
-                }
               }}
               name="description"
               onBlur={handleEditTaskSubmit}
