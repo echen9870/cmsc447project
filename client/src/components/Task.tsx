@@ -134,9 +134,10 @@ const Task = (task: Props) => {
         </div>
         {/*Task Expanded Section*/}
         {isExpanded && (
-          <div className="expandContent">
-            {/*Task Assigned Section*/}
-            <p>Assigned to: John Doe</p>
+          <div className="">
+            {/*Assign Task*/}
+            <button className="bg-yellow-400  text-white m-2 py-1 px-2 rounded float-left">Assign</button>
+            <p>Assigned to: {curTask.assignedUsers}</p>
 
             {/*Task Notes Section*/}
             <textarea

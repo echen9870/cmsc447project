@@ -35,6 +35,7 @@ const TaskGroup = ({ username }: Props) => {
 
   const formData = {
     name: "Group",
+    members: [],
     usernameList: [username],
   };
 
@@ -86,12 +87,13 @@ const TaskGroup = ({ username }: Props) => {
 
   //Creating a new group
   const handleGroupAdd = async () => {
-    const { name, usernameList } = formData;
+    const { name, members, usernameList } = formData;
     try {
       const response = await Axios.post(
         "http://localhost:3000/group/create_group",
         {
           name,
+          members,
           usernameList,
         }
       );
@@ -163,6 +165,27 @@ const TaskGroup = ({ username }: Props) => {
     }
   };
 
+  // Add/Delete a new member to the group
+  const handleAddDeleteMember = async (
+    groupID: string,
+    updateMember: string, 
+    addMember: boolean
+    ) => {
+    console.log("cat")
+    try {
+      // Determine whether to add or delete a member based on the value of addMember
+      const action = addMember ? 'addUser' : 'deleteUser';
+      const response = await Axios.put(`http://localhost:3000/groups/${groupID}/users/${updateMember}`, {
+        [action]: true  // Use computed property name to set addUser or deleteUser based on action
+      });
+
+      console.log(response);
+      await getListOfGroupIDs();
+    } catch(error) {
+      console.error("Error", error)
+    }
+  };
+
   return (
     <div className="flex">
       {/*Sidebar*/}
@@ -190,6 +213,7 @@ const TaskGroup = ({ username }: Props) => {
             groupID={currentGroupInfo.groupID}
             isOwner={currentGroupInfo.isOwner}
             onGroupNameChange={handleGroupNameChange}
+            onGroupMembersChange={handleAddDeleteMember}
             onGroupDelete={() => handleGroupDelete(currentGroupInfo.groupID)}
             onTaskAdd={() => handleOnTaskAdd()}
           ></TaskHeader>
