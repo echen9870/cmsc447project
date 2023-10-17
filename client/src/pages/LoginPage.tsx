@@ -62,6 +62,18 @@ const LoginPage = ({ onLogin }: Props) => {
     setIsLogin(!isLogin);
   };
 
+  window.onload = () => {
+    console.log("on page load ran");
+    //check cookie storage idea:
+    //if cookie found, attempt to login with cookie
+    //in order for this to work, the database needs a new collection that contains {session, username}
+    //server can either accept the login or reject, if reject then client-side js should delete the cookie
+    //sessions on the server expire/get deleted in a week
+    //a user can have multiple sessions
+    //if a user logs out, js should run on the client side to delete their cookie
+    //
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-prismDarkPurple">
       <div className="bg-prismLightPurple p-8 rounded-lg shadow-lg text-white">
