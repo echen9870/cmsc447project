@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 
 interface Props {
   groupID: string;
@@ -18,9 +19,25 @@ const Taskheader = ({ groupID,isOwner,onGroupDelete,onGroupNameChange,onTaskAdd,
   const [addDeleteMember,setAddDeleteMember] = useState(false);
   const [newMember,setNewMemeber] = useState("");
   const [add, setAdd] = useState(false);
-  // Just sample data should remove later
-  const existingMembers = ['Member1', 'Member2', 'Member3'];
 
+  // State to store the actual members from the API
+  const [actualMembers, setActualMembers] = useState([]);
+
+  useEffect(() => {
+    axios.get(`http://localhost:3000/group/list_group_members/${groupID}`)
+      .then(response => {
+        // Check if the response status is OK (status code 200)
+        if (response.status === 200) {
+          setActualMembers(response.data);
+        } else {
+          console.error('Error: Unexpected response status', response.status);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }, [groupID]);
+  
   return (
     <>
       <div className="bg-prismDarkPurple content-right">
@@ -55,20 +72,31 @@ const Taskheader = ({ groupID,isOwner,onGroupDelete,onGroupNameChange,onTaskAdd,
           {/* will help us add a new member*/}
           <div>
             <input type="text" placeholder="Add new member" onChange = {(e) => setNewMemeber(e.target.value)} value={newMember}/>
-            <button className="bg-green-500  text-white ml-2 m-2 py-1 px-2 rounded" onClick={() => { setAdd(true); onGroupMembersChange(groupID,newMember,add);}} >
+            <button className="bg-yellow-400  text-white ml-2 m-2 py-1 px-2 rounded" onClick={() => { setAdd(true); onGroupMembersChange(groupID,newMember,add);}} >
               Add Member
             </button>
           </div>
-          {/* will list and allow for removal of existing members*/}
+          {/* Display and allow removal of actual members */}
           <div>
             <select>
-              {existingMembers.map((member, index) => (
-                <option key={index} value={member}>
-                  {member}
-                </option>
-              ))}
-            </select>
-            <button className="bg-red-500  text-white ml-2 m-2 py-1 px-2 rounded" onClick={() =>  setAdd(false)}>Remove</button>
+              {actualMembers
+                .filter(member => member !== null) // don't display possible empty values
+                .map((member, index) => (
+                  <option key={index} value={member}>
+                    {member}
+                  </option>
+                ))}
+            </select>     
+            <button className="bg-red-500 text-white ml-2 m-2 py-1 px-2 rounded" onClick={() => {
+              const selectElement = document.querySelector('select'); //find element in
+              if (selectElement) {
+                const selectedMember = selectElement.value;
+                setAdd(false);
+                onGroupMembersChange(groupID, selectedMember, add);
+              }
+            }}>
+              Remove
+            </button>
           </div>
         </div>
       )}

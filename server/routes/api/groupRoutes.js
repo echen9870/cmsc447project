@@ -70,26 +70,56 @@ router.post("/create_group", async (req, res) => {
 
 // PUT request to add/delete a UserID to/from a Group
 router.put("/groups/:groupId/users/:userId", async (req, res) => {
-  const groupId = req.params.groupId;
-  const userId = req.params.userId;
-
+  const groupID = req.params.groupId;
+  const userID = req.params.userId;
+  // console.log(groupID)
+  
   try {
-    const group = await Group.findById(groupId);
+    const { action } = req.body;
+    console.log(action) // will say 'addUser' or 'deleteUser'
+    const group = await Group.findById(groupID);
+    console.log(userID);
 
     if (!group) {
       return res.status(404).json({ message: "Group not found." });
     }
-
+    const user = await User.findOne( {username: userID} );
+    //group.members.push(user._id);
+    
     // Add or delete the UserID from the Group's members array
-    if (req.body.addUser) {
-      group.members.push(userId);
-    } else if (req.body.deleteUser) {
-      group.members.pull(userId);
+    if (action == "addUser") {
+      group.members.push(user._id);
+    } else if (action == "deleteUser") {
+      group.members.pull(user._id);
     }
 
     const updatedGroup = await group.save();
 
     res.status(200).json(updatedGroup);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// GET request for displaying the members in the group
+router.get("/list_group_members/:groupId", async (req, res) => {
+  const groupID = req.params.groupId;
+
+  try {
+    const group = await Group.findById(groupID);
+
+    // Get an array of User ObjectIDs from the group's members
+    const memberObjectIDs = group.members;
+
+    // Fetch the usernames for the User ObjectIDs
+    const membersWithUsernames = await User.find({ _id: { $in: memberObjectIDs } });
+
+    // Extract usernames from the user documents
+    const usernames = membersWithUsernames.map(user => user.username);
+
+    res.status(200).json(usernames);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

@@ -171,20 +171,21 @@ const TaskGroup = ({ username }: Props) => {
     updateMember: string, 
     addMember: boolean
     ) => {
-    console.log("cat")
+    
     try {
       // Determine whether to add or delete a member based on the value of addMember
-      const action = addMember ? 'addUser' : 'deleteUser';
-      const response = await Axios.put(`http://localhost:3000/groups/${groupID}/users/${updateMember}`, {
-        [action]: true  // Use computed property name to set addUser or deleteUser based on action
+      const action = addMember ? "addUser" : "deleteUser";
+      const response = await Axios.put(`http://localhost:3000/group/groups/${groupID}/users/${updateMember}`, {
+        action  // Use computed property name to set addUser or deleteUser based on action
       });
 
       console.log(response);
-      await getListOfGroupIDs();
+      // need to re-render somehow - await onGroupChange(groupID);
     } catch(error) {
       console.error("Error", error)
     }
   };
+  
 
   return (
     <div className="flex">
