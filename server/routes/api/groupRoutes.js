@@ -90,7 +90,10 @@ router.put("/groups/:groupId/users/:userId", async (req, res) => {
     if (action == "addUser") {
       group.members.push(user._id);
     } else if (action == "deleteUser") {
-      group.members.pull(user._id);
+      // Will not allow the deletion of owner
+      if(user._id != group.owner){
+        group.members.pull(user._id);
+      }
     }
 
     const updatedGroup = await group.save();
