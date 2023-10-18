@@ -14,7 +14,8 @@ const LoginPage = ({ onLogin }: Props) => {
     confirmPassword: "",
   });
 
-  const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(true);
+    const [Error_handle,setError_handle] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
@@ -54,7 +55,8 @@ const LoginPage = ({ onLogin }: Props) => {
         console.log(response);
       }
     } catch (error) {
-      console.error("Error:", error);
+        console.error("Error:", error);
+        setError_handle(error);
     }
   };
 
@@ -99,7 +101,7 @@ const LoginPage = ({ onLogin }: Props) => {
               onChange={handleInputChange}
               className="w-full p-2 rounded text-gray-800"
               required
-            />
+                      />
             <label className="block ">Password</label>
             <input
               type="password"
@@ -108,6 +110,9 @@ const LoginPage = ({ onLogin }: Props) => {
               className="w-full p-2 rounded text-gray-800"
               required
             />
+              {isLogin && Error_handle && (
+              <p className="mt-4 text-red-600">Username or Password is incorrect</p>
+                      )}
             {!isLogin && (
               <>
                 <label className="block">Confirm Password</label>
@@ -119,7 +124,10 @@ const LoginPage = ({ onLogin }: Props) => {
                   required
                 />
               </>
-            )}
+              )}
+              {!isLogin && Error_handle && (
+                  <p className="mt-4 text-red-600">Username already exists</p>
+              )}
           </div>
 
           <button
