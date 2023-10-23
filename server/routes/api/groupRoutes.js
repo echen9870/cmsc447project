@@ -5,6 +5,7 @@
 var express = require("express");
 var router = express.Router();
 var Group = require("../../models/groupModel");
+var GroupMembers = require("../../models/groupMembersModel");
 const User = require("../../models/userModel");
 var Task = require("../../models/taskModel");
 
@@ -76,22 +77,33 @@ router.put("/groups/:groupId/users/:userId", async (req, res) => {
   
   try {
     const { action } = req.body;
+
     console.log(action) // will say 'addUser' or 'deleteUser'
+
     const group = await Group.findById(groupID);
-    console.log(userID);
+    console.log(userID); //print out username
 
     if (!group) {
       return res.status(404).json({ message: "Group not found." });
     }
     const user = await User.findOne( {username: userID} );
-    //group.members.push(user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // user's ObjectID
+    const newUser = user._id;
     
     // Add or delete the UserID from the Group's members array
     if (action == "addUser") {
+      const newMembership = new GroupMembers({groupId: groupID, userId: newUser});
+      await newMembership.save();
       group.members.push(user._id);
     } else if (action == "deleteUser") {
       // Will not allow the deletion of owner
-      if(user._id != group.owner){
+      if(!group.owner.equals(user._id)){
+        await GroupMembers.deleteOne({groupId: groupID, userId: newUser});
         group.members.pull(user._id);
       }
     }
