@@ -16,6 +16,7 @@ const LoginPage = ({ onLogin }: Props) => {
 
     const [isLogin, setIsLogin] = useState(true);
     const [Error_handle,setError_handle] = useState(false);
+    const [error_message,setError_message] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
@@ -55,7 +56,12 @@ const LoginPage = ({ onLogin }: Props) => {
         console.log(response);
       }
     } catch (error) {
-        console.error("Error:", error);
+        if (error.response) {
+          // Error message used to display to user, 
+          // we need to use .error to specify 'error' form the whole object being returned
+          setError_message(error.response.data.error);
+          console.log(error_message); // Print the error for developer too
+        }
         setError_handle(error);
     }
   };
@@ -126,7 +132,8 @@ const LoginPage = ({ onLogin }: Props) => {
               </>
               )}
               {!isLogin && Error_handle && (
-                  <p className="mt-4 text-red-600">Username already exists</p>
+                  // Use error_messages to see different errors from server
+                  <p className="mt-4 text-red-600">{error_message}</p>
               )}
           </div>
 
