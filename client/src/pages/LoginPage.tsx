@@ -55,7 +55,9 @@ const LoginPage = ({ onLogin }: Props) => {
         );
         console.log(response);
       }
-    } catch (error) {
+    }
+    // Add type 'any' to avoid 'unknown' error type error
+    catch (error: any) {
         if (error.response) {
           // Error message used to display to user, 
           // we need to use .error to specify 'error' form the whole object being returned
