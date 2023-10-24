@@ -18,13 +18,18 @@ const Task = (task: Props) => {
   //States to manage how our task should look
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isAssign, setIsAssign] = useState(false);
+
+  // State to store the actual members from the API
+  const [actualMembers, setActualMembers] = useState([]);
 
   //State to manage the info in the task
   const [curTask, setCurTask] = useState(task);
 
-  //When we want to expand/edit our task
+  //When we want to expand/edit/assign our task
   const handleExpandClick = () => setIsExpanded(!isExpanded);
   const handleEditTask = () => setIsEdit(!isEdit);
+  const handleAssignTask = () => setIsAssign(!isAssign);
 
   //Used to make sure our description text box automatically is the size needed to display all the information in the text box
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -33,7 +38,7 @@ const Task = (task: Props) => {
       textAreaRef.current.style.height = "auto"; // Reset the height to auto
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set the height based on the scroll height
     }
-  }, [isExpanded, textAreaRef.current, curTask.description]);
+  }, [isExpanded, textAreaRef.current, curTask.description, curTask.assignedUsers]);
 
   const handleFinish = () => {
     setCurTask((prev) => ({
@@ -83,6 +88,51 @@ const Task = (task: Props) => {
     setIsEdit(false);
   };
 
+  // Find groupId for a task, then list the members of the group.
+  const getMembersForTask = async () => {
+    try {
+      const response = await Axios.get(
+        `http://localhost:3000/task/group_members_for_task/${task._id}`
+      );
+      setActualMembers(response.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    task.onTaskRefresh();
+    //setIsAssign(false);
+  };
+  
+  useEffect(() => {
+    getMembersForTask();
+  }, [task._id]);
+
+  // Function to add a selected member to the task
+  const addSelectedMemberToTask = async () => {
+  const selectElement = document.querySelector('select');
+  if (selectElement) {
+    const selectedMember = selectElement.value;
+
+    try {
+      // Make a POST request to your server to add the selected member to the task
+      const response = await Axios.post(
+        `http://localhost:3000/task/add_member_to_task/${task._id}`,
+        {
+          selectedMemberId: selectedMember,
+        }
+      );
+
+      // Handle the response, for example, you can refresh the task or update the UI
+      console.log(response.data); // Log the updated task
+      task.onTaskRefresh(); // You might want to refresh the task after adding a member
+      // You can update your UI or state as needed
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle the error if the request fails
+    }
+  }
+};
+
   return (
     <>
       <div className="task flex flex-col">
@@ -128,31 +178,54 @@ const Task = (task: Props) => {
           <button className="deleteButton" onClick={() => onTaskDelete()}>
             Delete
           </button>
+          <button className="assignButton" onClick={handleAssignTask}>
+            {isAssign ? "Assign" : "Assigned"}
+          </button>
+            {/* Display and allow Assignment of Task to Member*/}
+            {isAssign && (
+              <select>
+                {actualMembers
+                .filter(member => member !== null)
+                .map((member, index) => (
+                  <option key={index} value={member}>
+                    {member}
+                  </option>
+                ))}
+              </select>
+            )}
+            {isAssign && <button
+              className="bg-yellow-500 text-white ml-1 m-1 py-.5 px-1 rounded"
+              onClick={addSelectedMemberToTask}
+            >
+              Add
+            </button>}
+            
+
+          {/* Task Description*/}    
           <button className="expandButton" onClick={handleExpandClick}>
             {isExpanded ? "Collapse" : "Expand"}
           </button>
-        </div>
-        {/*Task Expanded Section*/}
-        {isExpanded && (
-          <div className="">
-            {/*Assign Task*/}
-            <button className="bg-yellow-400  text-white m-2 py-1 px-2 rounded float-left">Assign</button>
-            <p>Assigned to: {curTask.assignedUsers}</p>
+            </div>
+            {/*Task Expanded Section*/}
+            {isExpanded && (
+              <div className="">
+                {/*Assign Task*/}
+                <p>Assigned to: {curTask.assignedUsers}</p>
 
-            {/*Task Notes Section*/}
-            <textarea
-              ref={textAreaRef}
-              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                handleTaskEdit(e);
-              }}
-              name="description"
-              onBlur={handleEditTaskSubmit}
-              className="flex-grow bg-prismPurple outline-gray-400 hover:border-2 text-gray-100 resize-none overflow-hidden"
-              placeholder="Add notes"
-              defaultValue={task.description}
-            />
-          </div>
-        )}
+                {/*Task Notes Section*/}
+                <textarea
+                  ref={textAreaRef}
+                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                    handleTaskEdit(e);
+                  }}
+                  name="description"
+                  onBlur={handleEditTaskSubmit}
+                  className="flex-grow bg-prismPurple outline-gray-400 hover:border-2 text-gray-100 resize-none overflow-hidden"
+                  placeholder="Add notes"
+                  defaultValue={task.description}
+                />
+              </div>
+            )}
       </div>
     </>
   );

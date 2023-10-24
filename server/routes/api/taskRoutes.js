@@ -10,8 +10,79 @@
 var express = require("express");
 var router = express.Router();
 var Task = require("../../models/taskModel");
+const User = require("../../models/userModel");
+var Group = require("../../models/groupModel");
 
-//Post Request
+// Route to find the groupId for a given task and retrieve the members of the group
+router.get('/group_members_for_task/:taskId', async (req, res) => {
+  try{
+    const taskId = req.params.taskId;
+
+    // Step 1: Find the task by taskId
+    const task = await Task.findById(taskId);
+    
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Step 2: Get the groupId from the task
+    const groupId = task.groupId;
+
+    // Step 3: Find the group associated with the groupId
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    // Step 4: Retrieve the members of the group
+    const memberObjectIDs = group.members;
+
+    // Fetch the usernames for the User ObjectIDs
+    const membersWithUsernames = await User.find({ _id: { $in: memberObjectIDs } });
+
+    // Extract usernames from the user documents
+    const usernames = membersWithUsernames.map(user => user.username);
+
+    res.status(200).json(usernames);
+
+  } catch(error){
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Post route to add a selected member to a task
+router.post('/add_member_to_task/:taskId', async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const selectedMemberId = req.body.selectedMemberId;
+    console.log(selectedMemberId);
+    // Find objectId of user
+    const user = await User.findOne({username: selectedMemberId});
+    const selectedMemberID = user._id;
+    console.log(user._id);
+
+    // Step 1: Find the task by taskId
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Step 2: Add the selected member to the assignedUsers array
+    task.assignedUsers.push(selectedMemberID);
+
+    // Step 3: Save the task document to update it with the new member
+    const updatedTask = await task.save();
+
+    res.status(200).json(updatedTask); // Return the updated task
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
 
 //Get Request By GroupID
 router.get("/get_task_group/:groupID", async (req, res) => {
