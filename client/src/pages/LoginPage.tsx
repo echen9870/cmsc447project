@@ -2,8 +2,7 @@ import { useState } from "react";
 import Axios from "axios"; // Import Axios - for backend interaction
 
 interface Props {
-  onLogin: (username:string) => void;
-
+  onLogin: (username: string) => void;
 }
 
 const LoginPage = ({ onLogin }: Props) => {
@@ -13,11 +12,13 @@ const LoginPage = ({ onLogin }: Props) => {
     email: "",
     confirmPassword: "",
   });
+  //Determin if the user is in Login or SignUp page
+  const [isLogin, setIsLogin] = useState(true);
 
-    const [isLogin, setIsLogin] = useState(true);
-    const [Error_handle,setError_handle] = useState(false);
-    const [error_message,setError_message] = useState("");
+  //Determine the current error if there is one
+  const [error_message, setError_message] = useState("");
 
+  //Saves the current change
   const handleInputChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
     setFormData({
@@ -29,6 +30,7 @@ const LoginPage = ({ onLogin }: Props) => {
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
     const { username, password, email, confirmPassword } = formData;
+    console.log(formData);
     try {
       if (isLogin) {
         const response = await Axios.post(
@@ -53,23 +55,32 @@ const LoginPage = ({ onLogin }: Props) => {
             confirmPassword,
           }
         );
-        console.log(response);
-      }
-    }
-    // Add type 'any' to avoid 'unknown' error type error
-    catch (error: any) {
-        if (error.response) {
-          // Error message used to display to user, 
-          // we need to use .error to specify 'error' form the whole object being returned
-          setError_message(error.response.data.error);
-          console.log(error_message); // Print the error for developer too
+        if (response.status === 201) {
+          alert("Account created successfully");
+          setError_message("");
+          setIsLogin(true);
         }
-        setError_handle(error);
+      }
+    } catch (error: any) {
+      // Add type 'any' to avoid 'unknown' error type error
+      if (error.response) {
+        // Error message used to display to user,
+        // we need to use .error to specify 'error' form the whole object being returned
+        setError_message(error.response.data.error);
+        console.log(error_message); // Print the error for developer too
+      }
     }
   };
 
   const toggleLoginSignup = () => {
     setIsLogin(!isLogin);
+    setFormData({
+      username: "",
+      password: "",
+      email: "",
+      confirmPassword: "",
+    });
+    setError_message("");
   };
 
   window.onload = () => {
@@ -96,6 +107,7 @@ const LoginPage = ({ onLogin }: Props) => {
                 <input
                   type="text"
                   name="email"
+                  value={formData.email}
                   onChange={handleInputChange}
                   className="w-full p-2 rounded text-gray-800"
                   required
@@ -106,39 +118,35 @@ const LoginPage = ({ onLogin }: Props) => {
             <input
               type="text"
               name="username"
-              onChange={handleInputChange}
-              className="w-full p-2 rounded text-gray-800"
-              required
-                      />
-            <label className="block ">Password</label>
-            <input
-              type="password"
-              name="password"
+              value={formData.username}
               onChange={handleInputChange}
               className="w-full p-2 rounded text-gray-800"
               required
             />
-              {isLogin && Error_handle && (
-              <p className="mt-4 text-red-600">Username or Password is incorrect</p>
-                      )}
+            <label className="block ">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="w-full p-2 rounded text-gray-800"
+              required
+            />
             {!isLogin && (
               <>
                 <label className="block">Confirm Password</label>
                 <input
                   type="password"
                   name="confirmPassword"
+                  value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className="w-full p-2 rounded text-gray-800"
                   required
                 />
               </>
-              )}
-              {!isLogin && Error_handle && (
-                  // Use error_messages to see different errors from server
-                  <p className="mt-4 text-red-600">{error_message}</p>
-              )}
+            )}
+            <p className="mt-4 text-red-600">{error_message}</p>
           </div>
-
           <button
             type="submit"
             className="w-full bg-blue-500 text-white p-2 rounded"
