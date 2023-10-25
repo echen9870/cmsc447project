@@ -14,16 +14,15 @@ const User = require("../../models/userModel");
 var Group = require("../../models/groupModel");
 
 // Route to find the groupId for a given task and retrieve the members of the group
-router.get('/group_members_for_task/:taskId', async (req, res) => {
-  try{
+router.get("/group_members_for_task/:taskId", async (req, res) => {
+  try {
     const taskId = req.params.taskId;
 
     // Step 1: Find the task by taskId
     const task = await Task.findById(taskId);
-    
 
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return res.status(404).json({ message: "Task not found" });
     }
 
     // Step 2: Get the groupId from the task
@@ -33,56 +32,65 @@ router.get('/group_members_for_task/:taskId', async (req, res) => {
     const group = await Group.findById(groupId);
 
     if (!group) {
-      return res.status(404).json({ message: 'Group not found' });
+      return res.status(404).json({ message: "Group not found" });
     }
 
     // Step 4: Retrieve the members of the group
     const memberObjectIDs = group.members;
 
     // Fetch the usernames for the User ObjectIDs
-    const membersWithUsernames = await User.find({ _id: { $in: memberObjectIDs } });
+    const membersWithUsernames = await User.find({
+      _id: { $in: memberObjectIDs },
+    });
 
     // Extract usernames from the user documents
-    const usernames = membersWithUsernames.map(user => user.username);
+    const usernames = membersWithUsernames.map((user) => user.username);
 
     res.status(200).json(usernames);
-
-  } catch(error){
-    console.error(error);
-    return res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Post route to add a selected member to a task
-router.post('/add_member_to_task/:taskId', async (req, res) => {
-  try {
-    const taskId = req.params.taskId;
-    const selectedMemberId = req.body.selectedMemberId;
-    console.log(selectedMemberId);
-    // Find objectId of user
-    const user = await User.findOne({username: selectedMemberId});
-    const selectedMemberID = user._id;
-    console.log(user._id);
-
-    // Step 1: Find the task by taskId
-    const task = await Task.findById(taskId);
-
-    if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
-    }
-
-    // Step 2: Add the selected member to the assignedUsers array
-    task.assignedUsers.push(selectedMemberID);
-
-    // Step 3: Save the task document to update it with the new member
-    const updatedTask = await task.save();
-
-    res.status(200).json(updatedTask); // Return the updated task
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: "Server error" });
   }
 });
+
+// Put route to add a selected member to a task
+router.put("/add_member_to_task/:taskId/:memberUsername", async (req, res) => {
+  console.log(req.body);
+  try {
+    const taskId = req.params.taskId;
+    const username = req.params.memberUsername;
+    const user = await User.findOne({ username: username });
+    await Task.updateOne(
+      { _id: taskId },
+      { $addToSet: { assignedUsers: username } }
+    );
+    res.status(201).json({ message: "Successfuly assigned user to task" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put(
+  "/remove_member_to_task/:taskId/:memberUsername",
+  async (req, res) => {
+    console.log(req.body);
+    try {
+      const taskId = req.params.taskId;
+      const username = req.params.memberUsername;
+      await Task.updateOne(
+        { _id: taskId },
+        { $pull: { assignedUsers: username } }
+      );
+      res
+        .status(201)
+        .json({ message: "Successfuly unassigned user from task" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
 
 //Get Request By GroupID
 router.get("/get_task_group/:groupID", async (req, res) => {
@@ -152,7 +160,7 @@ router.post("/create_task", async (req, res) => {
 router.put("/edit_task", async (req, res) => {
   try {
     const { _id, ...taskData } = req.body;
-    console.log(taskData)
+    console.log(taskData);
     // Find the task by taskId and update it
     const updatedTask = await Task.findByIdAndUpdate(
       _id,
@@ -165,6 +173,23 @@ router.put("/edit_task", async (req, res) => {
     }
 
     res.status(200).json(updatedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+//Put request for changing if the task is completed or not
+router.put("/toggle_finish_task/:taskID", async (req, res) => {
+  try {
+    const taskID = req.params.taskID;
+    const { completed } = req.body;
+
+    // Find the task by taskId and update it
+    const updatedTask = await Task.findByIdAndUpdate(taskID, {
+      completed: !completed, // Toggles the completed status
+    });
+
+    res.status(200).json("Task updated successfully");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred" });
