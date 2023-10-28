@@ -5,16 +5,16 @@
 .finishButton {
   @apply bg-blue-500 m-1 py-1 px-1 rounded;
 }
-.editButton {
+.purpleButton {
   @apply bg-prismStrongPurple m-1 py-1 px-1 rounded;
 }
-.deleteButton {
+.redButton {
   @apply bg-red-500 m-1 py-1 px-1 rounded;
 }
 .assignButton {
   @apply bg-yellow-500 m-1 py-1 px-1 rounded;
 }
-.expandButton {
+.greenButton {
   @apply bg-green-500 m-1 py-1 px-1 rounded;
 }
 .task {

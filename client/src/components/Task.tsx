@@ -7,10 +7,11 @@ interface Props {
   groupId: string;
   name: string;
   description: string;
-  assignedUsers: [];
+  assignedUsers: string[];
   completed: boolean;
   createdAt: string;
   dueAt: string;
+  members: string[];
   onTaskRefresh: () => void;
 }
 
@@ -18,18 +19,13 @@ const Task = (task: Props) => {
   //States to manage how our task should look
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [isAssign, setIsAssign] = useState(false);
-
-  // State to store the actual members from the API
-  const [actualMembers, setActualMembers] = useState([]);
-
+  const [selectedAssignMember, setSelectedAssignMember] = useState("");
   //State to manage the info in the task
   const [curTask, setCurTask] = useState(task);
 
-  //When we want to expand/edit/assign our task
+  //When we want to expand/edit our task
   const handleExpandClick = () => setIsExpanded(!isExpanded);
   const handleEditTask = () => setIsEdit(!isEdit);
-  const handleAssignTask = () => setIsAssign(!isAssign);
 
   //Used to make sure our description text box automatically is the size needed to display all the information in the text box
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -38,40 +34,7 @@ const Task = (task: Props) => {
       textAreaRef.current.style.height = "auto"; // Reset the height to auto
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set the height based on the scroll height
     }
-  }, [isExpanded, textAreaRef.current, curTask.description, curTask.assignedUsers]);
-
-  const handleFinish = () => {
-    setCurTask((prev) => ({
-      ...prev,
-      ["completed"]: !curTask.completed,
-    }));
-    handleEditTaskSubmit();
-  };
-
-  //Saving changes to our task
-  const handleTaskEdit = async (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setCurTask((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    console.log(curTask);
-  };
-
-  //When we want to delete our task
-  const onTaskDelete = async () => {
-    try {
-      const response = await Axios.delete(
-        `http://localhost:3000/task/delete_task/${task._id}`
-      );
-      console.log(response);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-    task.onTaskRefresh();
-  };
+  }, [isExpanded, textAreaRef.current, curTask.description]);
 
   //When we want to complete the action of editing our task
   const handleEditTaskSubmit = async () => {
@@ -88,50 +51,71 @@ const Task = (task: Props) => {
     setIsEdit(false);
   };
 
-  // Find groupId for a task, then list the members of the group.
-  const getMembersForTask = async () => {
+  const handleFinish = async () => {
     try {
-      const response = await Axios.get(
-        `http://localhost:3000/task/group_members_for_task/${task._id}`
+      console.log(!task.completed);
+      const response = await Axios.put(
+        `http://localhost:3000/task/toggle_finish_task/${task._id}`,
+        { completed: task.completed }
       );
-      setActualMembers(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    task.onTaskRefresh();
+  };
+
+  //Saving changes to our task
+  const handleTaskEdit = async (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    setCurTask((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //When we want to delete our task
+  const onTaskDelete = async () => {
+    try {
+      const response = await Axios.delete(
+        `http://localhost:3000/task/delete_task/${task._id}`
+      );
       console.log(response);
     } catch (error) {
       console.error("Error:", error);
     }
     task.onTaskRefresh();
-    //setIsAssign(false);
   };
-  
-  useEffect(() => {
-    getMembersForTask();
-  }, [task._id]);
 
-  // Function to add a selected member to the task
-  const addSelectedMemberToTask = async () => {
-  const selectElement = document.querySelector('select');
-  if (selectElement) {
-    const selectedMember = selectElement.value;
-
-    try {
-      // Make a POST request to your server to add the selected member to the task
-      const response = await Axios.post(
-        `http://localhost:3000/task/add_member_to_task/${task._id}`,
-        {
-          selectedMemberId: selectedMember,
-        }
-      );
-
-      // Handle the response, for example, you can refresh the task or update the UI
-      console.log(response.data); // Log the updated task
-      task.onTaskRefresh(); // You might want to refresh the task after adding a member
-      // You can update your UI or state as needed
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle the error if the request fails
+  //Assign/Unassign users to the task
+  const handleAssignUserToTask = async () => {
+    console.log(task._id);
+    console.log(selectedAssignMember);
+    if (!task.assignedUsers.includes(selectedAssignMember)) {
+      // Assigns the user to the task
+      try {
+        const response = await Axios.put(
+          `http://localhost:3000/task/add_member_to_task/${task._id}/${selectedAssignMember}`
+        );
+        console.log(response);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else {
+      //Unassign the user from the task
+      try {
+        const response = await Axios.put(
+          `http://localhost:3000/task/remove_member_to_task/${task._id}/${selectedAssignMember}`
+        );
+        console.log(response);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
-  }
-};
+    task.onTaskRefresh();
+  };
 
   return (
     <>
@@ -142,7 +126,7 @@ const Task = (task: Props) => {
             name="name"
             type="text"
             value={curTask.name}
-            className="text-black"
+            className="rounded bg-prismPurple outline-grey-400 text-white"
             onChange={(e) => handleTaskEdit(e)}
           ></input>
         ) : (
@@ -154,7 +138,7 @@ const Task = (task: Props) => {
           <input
             type="date"
             name="dueAt"
-            className="text-black"
+            className="rounded bg-prismPurple outline-grey-400 text-white"
             value={curTask.dueAt}
             onChange={(e) => handleTaskEdit(e)}
           ></input>
@@ -171,61 +155,69 @@ const Task = (task: Props) => {
               Confirm
             </button>
           ) : (
-            <button className="editButton" onClick={handleEditTask}>
+            <button className="purpleButton" onClick={handleEditTask}>
               Edit
             </button>
           )}
-          <button className="deleteButton" onClick={() => onTaskDelete()}>
+          <button className="redButton" onClick={() => onTaskDelete()}>
             Delete
           </button>
-          <button className="assignButton" onClick={handleAssignTask}>
-            {isAssign ? "Assign" : "Assigned"}
-          </button>
-            {/* Display and allow Assignment of Task to Member*/}
-            {isAssign && (
-              <select>
-                {actualMembers
-                .filter(member => member !== null)
-                .map((member, index) => (
-                  <option key={index} value={member}>
-                    {member}
-                  </option>
-                ))}
-              </select>
-            )}
-            {isAssign && <button
-              className="bg-yellow-500 text-white ml-1 m-1 py-.5 px-1 rounded"
-              onClick={addSelectedMemberToTask}
-            >
-              Add
-            </button>}
-            
-
-          {/* Task Description*/}    
-          <button className="expandButton" onClick={handleExpandClick}>
+          <button className="greenButton" onClick={handleExpandClick}>
             {isExpanded ? "Collapse" : "Expand"}
           </button>
-            </div>
-            {/*Task Expanded Section*/}
-            {isExpanded && (
-              <div className="">
-                {/*Assign Task*/}
-                <p>Assigned to: {curTask.assignedUsers}</p>
-
-                {/*Task Notes Section*/}
-                <textarea
-                  ref={textAreaRef}
-                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                    handleTaskEdit(e);
+        </div>
+        {/*Task Expanded Section*/}
+        {isExpanded && (
+          <>
+            <div className="expandContent">
+              {/*Task Assigned Section*/}
+              <div className="d-flex ">
+                <button
+                  className="purpleButton bg-purple-500 "
+                  onClick={handleAssignUserToTask}
+                >
+                  Unassign/Assign Members
+                </button>
+                <select
+                  className="text-white rounded-lg bg-prismPurple "
+                  id="dropdown"
+                  value={selectedAssignMember}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setSelectedAssignMember(e.target.value);
                   }}
-                  name="description"
-                  onBlur={handleEditTaskSubmit}
-                  className="flex-grow bg-prismPurple outline-gray-400 hover:border-2 text-gray-100 resize-none overflow-hidden"
-                  placeholder="Add notes"
-                  defaultValue={task.description}
-                />
+                >
+                  <option value={""} className=""></option>
+                  {task.members.map((member, index) => (
+                    <option key={index} value={member} className="text-white">
+                      {member}
+                    </option>
+                  ))}
+                </select>
               </div>
-            )}
+              <div className="flex outline-gray-400 outline rounded-md ">
+                <p className="px-2 border-r-2">Assigned To:</p>
+                {task.assignedUsers.map((member) => (
+                  <p className="px-2 border-x-2">{member}</p>
+                ))}
+                <p className="px-2 border-l-2"></p>
+              </div>
+
+              {/*Task Notes Section*/}
+              <textarea
+                ref={textAreaRef}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                  handleTaskEdit(e);
+                }}
+                name="description"
+                onBlur={handleEditTaskSubmit}
+                className="flex-grow bg-prismPurple outline-gray-400 hover:border-2 my-2 text-gray-100 resize-none overflow-hidden"
+                placeholder="Add notes"
+                defaultValue={task.description}
+              />
+            </div>
+          </>
+        )}
       </div>
     </>
   );
