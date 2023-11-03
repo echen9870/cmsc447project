@@ -93,6 +93,7 @@ router.put("/add_member_to_task/:taskId/:memberUsername", async (req, res) => {
   }
 });
 
+// PUT route to remove/delete a selected member from a task
 router.put("/remove_member_to_task/:taskId/:memberUsername",
   async (req, res) => {
     console.log(req.body);
@@ -238,6 +239,9 @@ router.delete("/delete_task/:taskId", async (req, res) => {
 
     // Find the task by taskId and delete it
     const deletedTask = await Task.findByIdAndDelete(taskId);
+
+    // Delete the task form all the users assigned this task 
+    const deleteTask = await AllTasks.deleteMany({taskId: taskId})
 
     if (!deletedTask) {
       return res.status(404).json({ message: "Task not found" });

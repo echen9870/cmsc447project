@@ -7,6 +7,7 @@ var router = express.Router();
 var Group = require("../../models/groupModel");
 const User = require("../../models/userModel");
 var Task = require("../../models/taskModel");
+var AllTasks = require("../../models/AllTasksModel")
 
 // GET request to retrieve a list groups that memberUsername is a part of
 router.get("/get_groups/:username", async (req, res) => {
@@ -182,6 +183,7 @@ router.delete("/delete_all_tasks/:groupId", async (req, res) => {
   const groupID = req.params.groupId;
   try {
     await Task.deleteMany({ groupId: groupID });
+    await AllTasks.deleteMany({ groupId: groupID }); //for All tasks
     res.status(200).json({ message: "Tasks deleted successfully" });
   } catch (error) {
     console.error(error);
@@ -196,6 +198,9 @@ router.delete("/delete_group/:groupId", async (req, res) => {
   try {
     //Delete the tasks associated with the group
     const groupTasks = await Task.deleteMany({ groupId: groupID });
+
+    //Remove from all tasks table too
+    const groupAllTasks = await AllTasks.deleteMany({ groupId: groupID })
 
     //Delete the group
     const group = await Group.findByIdAndRemove(groupID);

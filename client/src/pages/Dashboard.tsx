@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import TaskGroup from "../components/TaskGroup";
 import Calendar from "../components/Calendar";
 import AllTasks from "../components/AllTasks";
@@ -11,7 +11,7 @@ interface Props {
 export const Dashboard = ({ onLogout, username }: Props) => {
   const [selectedView, setSelectedView] = useState("TaskGroup");
 
-  const handleSelectView = (view) => {
+  const handleSelectView = (view: SetStateAction<string>) => {
     setSelectedView(view);
   };
 
