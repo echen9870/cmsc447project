@@ -12,6 +12,7 @@ var router = express.Router();
 var Task = require("../../models/taskModel");
 const User = require("../../models/userModel");
 var Group = require("../../models/groupModel");
+var AllTasks = require("../../models/AllTasksModel")
 
 // Route to find the groupId for a given task and retrieve the members of the group
 router.get("/group_members_for_task/:taskId", async (req, res) => {
@@ -64,6 +65,27 @@ router.put("/add_member_to_task/:taskId/:memberUsername", async (req, res) => {
       { _id: taskId },
       { $addToSet: { assignedUsers: username } }
     );
+
+    // Fetch the task
+    const task = await Task.findOne({ _id: taskId });
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // Extract the groupId from the task
+    const groupId = task.groupId;
+    const userId = user._id;
+
+    // Create a new entry in the AllTasks collection
+    const allTasks = new AllTasks({
+      userId,
+      groupId,
+      taskId,
+    });
+
+    await allTasks.save();
+
     res.status(201).json({ message: "Successfuly assigned user to task" });
   } catch (error) {
     console.error(error);
@@ -71,8 +93,7 @@ router.put("/add_member_to_task/:taskId/:memberUsername", async (req, res) => {
   }
 });
 
-router.put(
-  "/remove_member_to_task/:taskId/:memberUsername",
+router.put("/remove_member_to_task/:taskId/:memberUsername",
   async (req, res) => {
     console.log(req.body);
     try {
@@ -82,9 +103,23 @@ router.put(
         { _id: taskId },
         { $pull: { assignedUsers: username } }
       );
-      res
-        .status(201)
-        .json({ message: "Successfuly unassigned user from task" });
+
+      // Fetch the task and user
+      const task = await Task.findOne({ _id: taskId });
+      const user = await User.findOne({ username: username });
+
+      // Delete the corresponding entry from AllTasks
+      const deleteAllTasks = await AllTasks.deleteOne({ userId: user._id, taskId: taskId });
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+
+      if (deleteAllTasks.deletedCount === 0) {
+        return res.status(404).json({ message: "AllTasks not found" });
+      }
+
+      res.status(201).json({ message: "Successfuly unassigned user from task" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server error" });
