@@ -22,10 +22,11 @@ const Task = (task: Props) => {
   const [selectedAssignMember, setSelectedAssignMember] = useState("");
   //State to manage the info in the task
   const [curTask, setCurTask] = useState(task);
-
+  
   //When we want to expand/edit our task
   const handleExpandClick = () => setIsExpanded(!isExpanded);
   const handleEditTask = () => setIsEdit(!isEdit);
+  
 
   //Used to make sure our description text box automatically is the size needed to display all the information in the text box
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -73,6 +74,8 @@ const Task = (task: Props) => {
     setCurTask((prev) => ({
       ...prev,
       [name]: value,
+      // Synchronize assignedUsers with the original task
+      assignedUsers: [...task.assignedUsers]
     }));
   };
 

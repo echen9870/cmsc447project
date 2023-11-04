@@ -7,8 +7,9 @@ const taskSchema = new mongoose.Schema({
   description: { type: String, default: "" }, //task Created
   assignedUsers: [{ type: String, ref: "User" }], //array
   completed: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-  dueAt: { type: Date },
+  //replace Date with String for date-type without the time; "YYYY-MM-DD"
+  createdAt: { type: Date, default: Date.now }, 
+  dueAt: { String: Date },
 });
 
 const Task = mongoose.model("Task", taskSchema);

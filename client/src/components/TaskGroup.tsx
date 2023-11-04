@@ -185,7 +185,7 @@ const TaskGroup = ({ username }: Props) => {
       const response = await Axios.put(
         `http://localhost:3000/group/add_member/${username}/${currentGroupInfo.groupID}`
       );
-
+      
       console.log(response);
     } catch (error) {
       console.error("Error:", error);
@@ -198,7 +198,7 @@ const TaskGroup = ({ username }: Props) => {
       const response = await Axios.put(
         `http://localhost:3000/group/remove_member/${username}/${currentGroupInfo.groupID}`
       );
-
+      
       console.log(response);
     } catch (error) {
       console.error("Error:", error);

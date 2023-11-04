@@ -254,4 +254,37 @@ router.delete("/delete_task/:taskId", async (req, res) => {
   }
 });
 
+// Define a route to retrieve all values with the userId for all tasks
+router.get("/get_all_tasks/:username", async (req, res) => {
+  try {
+    const username = req.params.username;
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const userId = user._id;
+
+    // Use Mongoose to query the database for tasks with the specified userId
+    const tasks = await AllTasks.find({ userId: userId });
+
+    if (tasks) {
+      const taskDetails = [];
+      
+      // Loop through each task and fetch its details
+      for (const task of tasks) {
+        const taskDetail = await Task.findOne({ _id: task.taskId });
+        taskDetails.push(taskDetail);
+      }
+
+      res.json(taskDetails);
+    } else {
+      res.status(404).json({ message: "No tasks found for the given userId" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 module.exports = router;

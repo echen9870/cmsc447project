@@ -1,0 +1,74 @@
+/* AllTasks.css */
+
+/* Container styles */
+.all-tasks-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Page title styles */
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Task card styles */
+.task-card {
+  border: 1px solid #eaeaea;
+  padding: 20px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Task name styles */
+.task-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Task description styles */
+.task-description {
+  font-size: 14px;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Assigned users styles */
+.task-assigned-users {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #888;
+}
+
+/* Task status styles */
+.task-status {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.task-status.done {
+  color: #22b24c; /* Green color for "Done" */
+}
+
+.task-status.undone {
+  color: #e74c3c; /* Red color for "Undone" */
+}
+
+/* Due date styles */
+.task-due-date {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #777;
+}
+.scrollable-container {
+  max-height: 600px; 
+  overflow-y: auto; 
+}
+
