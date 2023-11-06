@@ -38,7 +38,7 @@ const AllTasks = ({ username }: Props) => {
       });
   }, [username]);
 
-  // Categorize tasks into "Due Today," "Due This Week," and "Everything Else"
+  // Categorize tasks into "Due Today," "Due This Week," and "Upcoming"
   const today = new Date();
   const oneWeekFromToday = new Date(today);
   oneWeekFromToday.setDate(today.getDate() + 7);
@@ -96,7 +96,7 @@ const AllTasks = ({ username }: Props) => {
           </div>
 
           <div className="category-section">
-            <h2>Everything Else</h2>
+            <h2>Upcoming</h2>
             {everythingElseTasks.map((task) => (
               <div key={task._id} className="task-card">
                 <h2 className="task-name">{task.name}</h2>
