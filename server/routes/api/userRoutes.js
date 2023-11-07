@@ -20,17 +20,23 @@ router.post("/create_user", async (req, res) => {
         .status(400)
         .json({ error: "Username, email, and password are required" });
     }
-    //check if user already exists
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      console.log("Username already exists");
-      return res.status(409).json({ error: "Username already exists" });
+    //check if email is valid
+    var validEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!validEmail.test(email)) {
+      console.log("Invalid email");
+      return res.status(409).json({ error: "Invalid email" });
     }
     //check if email already exists
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
       console.log("Email already exists");
       return res.status(409).json({ error: "Email already exists" });
+    }
+    //check if user already exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      console.log("Username already exists");
+      return res.status(409).json({ error: "Username already exists" });
     }
     //If passwords don't match
     if (password != confirmPassword) {
