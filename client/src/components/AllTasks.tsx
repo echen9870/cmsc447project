@@ -40,11 +40,17 @@ const AllTasks = ({ username }: Props) => {
 
   // Categorize tasks into "Due Today," "Due This Week," and "Upcoming"
   const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
   const oneWeekFromToday = new Date(today);
   oneWeekFromToday.setDate(today.getDate() + 7);
 
+  const overdueTasks = tasks.filter(
+    (task) => new Date(task.dueAt) <= yesterday && task.completed == false
+  );
+
   const dueTodayTasks = tasks.filter(
-    (task) => new Date(task.dueAt) <= today
+    (task) => new Date(task.dueAt) > yesterday && new Date(task.dueAt) <= today
   );
 
   const dueThisWeekTasks = tasks.filter(
@@ -61,6 +67,23 @@ const AllTasks = ({ username }: Props) => {
       <h1 className="page-title">{username}'s Tasks Stream</h1>
       <div className="scrollable-container">
         <div className="tasks-list">
+        <div className="category-section">
+            <h2>Overdue</h2>
+            {overdueTasks.map((task) => (
+              <div key={task._id} className="task-card">
+                <h2 className="task-name">{task.name}</h2>
+                <p className="task-description">{task.description}</p>
+                <p className="task-assigned-users">
+                  Assigned Users: {task.assignedUsers.join(", ")}
+                </p>
+                <p className={`task-status ${task.completed ? "done" : "undone"}`}>
+                  {task.completed ? "Done" : "Undone"}
+                </p>
+                <p className="task-due-date">Due Date: {task.dueAt}</p>
+              </div>
+            ))}
+          </div>
+
           <div className="category-section">
             <h2>Due Today</h2>
             {dueTodayTasks.map((task) => (
