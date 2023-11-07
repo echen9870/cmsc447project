@@ -9,11 +9,11 @@ interface Props {
 }
 
 export const Dashboard = ({ onLogout, username }: Props) => {
-  const storedView = localStorage.getItem("selectedView");
+  const storedView = sessionStorage.getItem("selectedView");
   const [selectedView, setSelectedView] = useState(storedView || "TaskGroup");
 
   useEffect(() => {
-    localStorage.setItem("selectedView", selectedView);
+    sessionStorage.setItem("selectedView", selectedView);
   }, [selectedView]);
 
   const handleSelectView = (view: SetStateAction<string>) => {
@@ -21,7 +21,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("selectedView");
+    sessionStorage.removeItem("selectedView");
     onLogout("");
   };
 

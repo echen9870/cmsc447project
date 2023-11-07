@@ -4,8 +4,8 @@ import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 
 function App() {
-  const storedLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const storedUsername = localStorage.getItem("username") || "";
+  const storedLoggedIn = sessionStorage.getItem("loggedIn") === "true";
+  const storedUsername = sessionStorage.getItem("username") || "";
 
   const [loggedIn, setLoggedIn] = useState(storedLoggedIn);
   const [username, setUsername] = useState(storedUsername);
@@ -14,20 +14,20 @@ function App() {
     const newLoggedIn = !loggedIn;
     setLoggedIn(newLoggedIn);
     setUsername(username);
-    localStorage.setItem("loggedIn", String(newLoggedIn));
-    localStorage.setItem("username", username);
+    sessionStorage.setItem("loggedIn", String(newLoggedIn));
+    sessionStorage.setItem("username", username);
   };
 
   useEffect(() => {
     if (loggedIn) {
-      localStorage.setItem("loggedIn", "true");
-      localStorage.setItem("username", username);
+      sessionStorage.setItem("loggedIn", "true");
+      sessionStorage.setItem("username", username);
     }
   }, [loggedIn, username]);
 
   const handleLogout = () => {
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("username");
+    sessionStorage.removeItem("loggedIn");
+    sessionStorage.removeItem("username");
     setLoggedIn(false);
     setUsername("");
   };

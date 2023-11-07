@@ -29,14 +29,14 @@ interface Task {
 const TaskGroup = ({ username }: Props) => {
   const [listOfGroup, setListOfGroup] = useState<Group[]>([]);
   const [currentGroupInfo, setCurrentGroupInfo] = useState({
-    groupID: localStorage.getItem("currentGroupID") || "",
+    groupID: sessionStorage.getItem("currentGroupID") || "",
     isOwner: false,
     tasks: [],
     members: [],
   });
 
   useEffect(() => {
-    const storedGroupID = localStorage.getItem("currentGroupID") || "";
+    const storedGroupID = sessionStorage.getItem("currentGroupID") || "";
     if (storedGroupID) {
       onGroupChange(storedGroupID);
     }
@@ -44,7 +44,7 @@ const TaskGroup = ({ username }: Props) => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("currentGroupID", currentGroupInfo.groupID);
+    sessionStorage.setItem("currentGroupID", currentGroupInfo.groupID);
   }, [currentGroupInfo.groupID]);
 
   const formData = {
