@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import TaskGroup from "../components/TaskGroup";
 import Calendar from "../components/Calendar";
 import AllTasks from "../components/AllTasks";
@@ -9,13 +9,19 @@ interface Props {
 }
 
 export const Dashboard = ({ onLogout, username }: Props) => {
-  const [selectedView, setSelectedView] = useState("TaskGroup");
+  const storedView = localStorage.getItem("selectedView");
+  const [selectedView, setSelectedView] = useState(storedView || "TaskGroup");
+
+  useEffect(() => {
+    localStorage.setItem("selectedView", selectedView);
+  }, [selectedView]);
 
   const handleSelectView = (view: SetStateAction<string>) => {
     setSelectedView(view);
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("selectedView");
     onLogout("");
   };
 

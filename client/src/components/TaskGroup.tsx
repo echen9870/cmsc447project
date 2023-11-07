@@ -29,11 +29,23 @@ interface Task {
 const TaskGroup = ({ username }: Props) => {
   const [listOfGroup, setListOfGroup] = useState<Group[]>([]);
   const [currentGroupInfo, setCurrentGroupInfo] = useState({
-    groupID: "",
+    groupID: localStorage.getItem("currentGroupID") || "",
     isOwner: false,
     tasks: [],
     members: [],
   });
+
+  useEffect(() => {
+    const storedGroupID = localStorage.getItem("currentGroupID") || "";
+    if (storedGroupID) {
+      onGroupChange(storedGroupID);
+    }
+    getListOfGroupIDs();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("currentGroupID", currentGroupInfo.groupID);
+  }, [currentGroupInfo.groupID]);
 
   const formData = {
     name: "Group",
@@ -185,7 +197,7 @@ const TaskGroup = ({ username }: Props) => {
       const response = await Axios.put(
         `http://localhost:3000/group/add_member/${username}/${currentGroupInfo.groupID}`
       );
-      
+
       console.log(response);
     } catch (error) {
       console.error("Error:", error);
@@ -198,7 +210,7 @@ const TaskGroup = ({ username }: Props) => {
       const response = await Axios.put(
         `http://localhost:3000/group/remove_member/${username}/${currentGroupInfo.groupID}`
       );
-      
+
       console.log(response);
     } catch (error) {
       console.error("Error:", error);
@@ -228,20 +240,24 @@ const TaskGroup = ({ username }: Props) => {
       </aside>
 
       <main className="flex-1 p-4 h-screen flex flex-col pb-40">
-      {currentGroupInfo.groupID && (
-            <TaskHeader
-              refreshTask={handleRefreshTask}
-              groupID={currentGroupInfo.groupID}
-              isOwner={currentGroupInfo.isOwner}
-              onGroupNameChange={handleGroupNameChange}
-              onGroupDelete={() => handleGroupDelete(currentGroupInfo.groupID)}
-              onTaskAdd={() => handleOnTaskAdd()}
-            ></TaskHeader>
-          )}
+        {!currentGroupInfo.groupID && (
+          <h1>Select or create a group to get started</h1>
+        )}
+        {currentGroupInfo.groupID && (
+          <TaskHeader
+            refreshTask={handleRefreshTask}
+            groupID={currentGroupInfo.groupID}
+            isOwner={currentGroupInfo.isOwner}
+            onGroupNameChange={handleGroupNameChange}
+            onGroupDelete={() => handleGroupDelete(currentGroupInfo.groupID)}
+            onTaskAdd={() => handleOnTaskAdd()}
+          ></TaskHeader>
+        )}
         <div className="h-4/5 overflow-y-auto">
-          
           <div>
-            <h1 className="text-white">Uncompleted Tasks</h1>
+            {currentGroupInfo.groupID && (
+              <h1 className="text-white">Uncompleted Tasks</h1>
+            )}
             {currentGroupInfo.tasks &&
               (currentGroupInfo.tasks as Task[]).map(
                 (task) =>
@@ -257,7 +273,9 @@ const TaskGroup = ({ username }: Props) => {
           </div>
           <div className="flex-1 border-t-2 border-gray-400"></div>{" "}
           <div>
-            <h1 className="text-white">Completed Tasks</h1>
+            {currentGroupInfo.groupID && (
+              <h1 className="text-white">Completed Tasks</h1>
+            )}
             {currentGroupInfo.tasks &&
               (currentGroupInfo.tasks as Task[]).map(
                 (task) =>

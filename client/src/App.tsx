@@ -1,23 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
-  const handleLoginInOut = (username:string) => {
-    setLoggedIn(!loggedIn);
-    setUsername(username);
+  const storedLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const storedUsername = localStorage.getItem("username") || "";
 
+  const [loggedIn, setLoggedIn] = useState(storedLoggedIn);
+  const [username, setUsername] = useState(storedUsername);
+
+  const handleLoginIn = (username:string) => {
+    const newLoggedIn = !loggedIn;
+    setLoggedIn(newLoggedIn);
+    setUsername(username);
+    localStorage.setItem("loggedIn", String(newLoggedIn));
+    localStorage.setItem("username", username);
+  };
+
+  useEffect(() => {
+    if (loggedIn) {
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("username", username);
+    }
+  }, [loggedIn, username]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("username");
+    setLoggedIn(false);
+    setUsername("");
   };
 
   return (
-    <div className = "overflow-hidden">
+    <div className="overflow-hidden">
       {loggedIn ? (
-        <Dashboard onLogout={handleLoginInOut} username = {username}/> // Render the Dashboard component if loggedIn is true
+        <Dashboard onLogout={handleLogout} username={username} />
       ) : (
-        <LoginPage onLogin={handleLoginInOut} /> // Render the LoginPage component if loggedIn is false
+        <LoginPage onLogin={handleLoginIn} />
       )}
     </div>
   );
