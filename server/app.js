@@ -1,20 +1,26 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const authRoutes = require('./routes/api/userRoutes'); 
 const groupRoutes = require('./routes/api/groupRoutes'); 
 const taskRoutes = require('./routes/api/taskRoutes'); 
-const app = express();
+const getConnection = require("./config/db");
 const cors = require("cors");
+const dotEnv = require("dotenv");
+const app = express();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000
 
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://mongo:BhYSvmZJmN1ERVgO@cmsc447.ymkauhy.mongodb.net/test', { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true });
-
+//registering middlewares
+dotEnv.config(); //config with envirnment setup
 app.use(express.json()); //for formatting
 app.use(cors()); //needs cors to connect to frontend!!!
+
+// Connect to MongoDB
+getConnection();
+
+// Print this out on the first window
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
 // Use the auth routes
 app.use('/auth', authRoutes);
@@ -26,5 +32,5 @@ app.use('/group',groupRoutes);
 app.use('/task',taskRoutes);
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+  console.log(`App listening at http://localhost:${port}`)
+})
