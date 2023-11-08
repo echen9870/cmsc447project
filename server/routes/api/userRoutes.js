@@ -100,7 +100,7 @@ router.post("/login_user", async (req, res) => {
   }
 });
 
-router.post("/delete_user/:username", async (req, res) => {
+router.delete("/delete_user/:username", async (req, res) => {
   const username = req.params.username;
   try {
     const user = User.findOne({ username: username });
@@ -119,6 +119,8 @@ router.post("/delete_user/:username", async (req, res) => {
     await Task.updateMany({}, { $pull: { assignedUsers: user.username }});
     // Remove the user from all groups they're in
     await Group.updateMany({}, { $pull: { members: user._id }})
+    // Delete the actual user
+    await User.deleteOne({ _id: user._id });
     res.status(204).send(); // 204 No Content response
   } catch (error) {
     console.error(error);
