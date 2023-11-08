@@ -75,7 +75,7 @@ router.post("/login_user", async (req, res) => {
     //check if user exists
     if (!user) {
       console.log("Username does not exist");
-      return res.status(401).json({ error: "Authentication failed" });
+      return res.status(401).json({ error: "Incorrect Username or Password." });
     }
 
     // Compare the input password with the hashed password in the database
@@ -89,12 +89,54 @@ router.post("/login_user", async (req, res) => {
       return res.status(200).json({ message: "Login successful", token });
     } else {
       console.log("incorrect password");
-      return res.status(401).json({ error: "Authentication failed" });
+      return res.status(401).json({ error: "Incorrect Username or Password." });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred" });
   }
+});
+
+
+router.post("/password_recovery", async (req, res) => {
+  try {
+    const { usernameOrEmail, newPassword, confirmPassword } = req.body;
+
+    //validate input
+    if (!usernameOrEmail || !newPassword || !confirmPassword) {
+      return res.status(400).json({ error: "Username, Email, and Password are required" });
+    }
+
+    //find user by their unique value of username or email
+    const user = await User.findOne({ $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }] });
+
+    //check if user exists
+    if (!user) {
+      console.log("Username or email does not exist");
+      return res.status(401).json({ error: "Username or Email does not exist" });
+    }
+
+    //passwords don't match
+    if (newPassword !== confirmPassword) {
+      console.log("Passwords don't match");
+      return res.status(400).json({ error: "Passwords don't match" });
+    }
+
+    //hash the new password before saving it
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    //update the user's password in the database
+    user.password = hashedPassword;
+
+    await user.save(); //save the updated user in the database
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+
 });
 
 module.exports = router;

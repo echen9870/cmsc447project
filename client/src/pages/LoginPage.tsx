@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Axios from "axios"; // Import Axios - for backend interaction
+import PwdRecovery from "./PwdRecovery";
 
 interface Props {
   onLogin: (username: string) => void;
@@ -17,6 +18,9 @@ const LoginPage = ({ onLogin }: Props) => {
 
   //Determine the current error if there is one
   const [error_message, setError_message] = useState("");
+
+  //For password recovery
+  const [isPwdRecoveryVisible, setIsPwdRecoveryVisible] = useState(false);
 
   //Saves the current change
   const handleInputChange = (e: React.ChangeEvent<any>) => {
@@ -83,6 +87,10 @@ const LoginPage = ({ onLogin }: Props) => {
     setError_message("");
   };
 
+  const handlePwdRecovery = () => {
+    setIsPwdRecoveryVisible(true);
+  };
+
   window.onload = () => {
     console.log("on page load ran");
     //check cookie storage idea:
@@ -98,71 +106,85 @@ const LoginPage = ({ onLogin }: Props) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-prismDarkPurple">
       <div className="bg-prismLightPurple p-8 rounded-lg shadow-lg text-white">
-        <h2 className="text-2xl mb-4">{isLogin ? "Login" : "Sign Up"}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            {!isLogin && (
-              <>
-                <label className="block">Email</label>
+        {/* Password Recovery Form */}
+        {isPwdRecoveryVisible ? (
+          <PwdRecovery onCancel={() => setIsPwdRecoveryVisible(false)} />
+        ) : (
+          <>
+            <h2 className="text-2xl mb-4">{isLogin ? "Login" : "Sign Up"}</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                {!isLogin && (
+                  <>
+                    <label className="block">Email</label>
+                    <input
+                      type="text"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full p-2 rounded text-gray-800"
+                      required
+                    />
+                  </>
+                )}
+                <label className="block">Username</label>
                 <input
                   type="text"
-                  name="email"
-                  value={formData.email}
+                  name="username"
+                  value={formData.username}
                   onChange={handleInputChange}
                   className="w-full p-2 rounded text-gray-800"
                   required
                 />
-              </>
-            )}
-            <label className="block">Username</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              className="w-full p-2 rounded text-gray-800"
-              required
-            />
-            <label className="block ">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full p-2 rounded text-gray-800"
-              required
-            />
-            {!isLogin && (
-              <>
-                <label className="block">Confirm Password</label>
+                <label className="block ">Password</label>
                 <input
                   type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
+                  name="password"
+                  value={formData.password}
                   onChange={handleInputChange}
                   className="w-full p-2 rounded text-gray-800"
                   required
                 />
-              </>
-            )}
-            <p className="mt-4 text-red-600">{error_message}</p>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded"
-          >
-            {isLogin ? "Login" : "Sign Up"}
-          </button>
-        </form>
-        <p className="mt-4 text-gray-600">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
-          <button className="ml-2 text-blue-500" onClick={toggleLoginSignup}>
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
-        </p>
+                {!isLogin && (
+                  <>
+                    <label className="block">Confirm Password</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className="w-full p-2 rounded text-gray-800"
+                      required
+                    />
+                  </>
+                )}
+                <p className="mt-4 text-red-600">{error_message}</p>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white p-2 rounded"
+              >
+                {isLogin ? "Login" : "Sign Up"}
+              </button>
+            </form>
+            <p className="mt-4 text-gray-600">
+              {isLogin ? "Don't have an account?" : "Already have an account?"}
+              <button className="ml-2 text-blue-500" onClick={toggleLoginSignup}>
+                {isLogin ? "Sign Up" : "Login"}
+              </button>
+            </p>
+          {/* Another option for the user to recover the password */}
+          <p className="mt-4 text-gray-600">
+            {"Forgot your password?"}
+            <button className="ml-2 text-blue-500" onClick={handlePwdRecovery}>
+              {"Click Here"}
+            </button>
+          </p>
+        </>
+        )}
       </div>
     </div>
-  );
+  );  
 };
 
 export default LoginPage;
