@@ -65,13 +65,13 @@ router.put("/remove_member/:username/:groupID", async (req, res) => {
   const user = await User.findOne({ username: username });
 
   //stops the removal of owner from their own group
-  // const userID = user._id;
-  // const owner = await Group.findOne({ owner: userID })
-  // if(owner) {
-  //   return res.status(400).json({ error: "You cannot remove the owner" });
-  // }
+  const userID = user._id;
+  const groupID = req.params.groupID
+  const group = await Group.findOne({ _id: groupID });
+  if(group.owner.equals(userID)) {
+    return res.status(400).json({ error: "You cannot remove the owner" });
+  }
 
-  const groupID = req.params.groupID;
   try {
     await Group.updateOne({ _id: groupID }, { $pull: { members: user._id } });
     await Task.updateMany(
