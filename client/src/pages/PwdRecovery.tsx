@@ -42,7 +42,7 @@ const PwdRecovery: React.FC<PwdRecoveryProps> = ({ onCancel }) => {
         alert("Password changed successfully");
         onCancel(); // Close the password recovery form
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         setError_message(error.response.data.error);
       }
