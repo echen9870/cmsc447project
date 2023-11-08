@@ -3,6 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
+const Task = require("../../models/taskModel");
+const Group = require("../../models/groupModel");
+const AllTasks = require("../../models/AllTasksModel")
 const crypto = require("crypto");
 
 const generateSecretKey = () => {
@@ -137,6 +140,34 @@ router.post("/password_recovery", async (req, res) => {
     res.status(500).json({ error: "An error occurred" });
   }
 
+});
+
+router.delete("/delete_user/:username", async (req, res) => {
+  const username = req.params.username;
+  try {
+    const user = User.findOne({ username: username });
+    // Delete all of the owned groups
+    for(var ownedGroups = Group.find({ owner: user._id });
+        ownedGroups.hasNext();
+        ownedGroups = ownedGroups.next()) {
+      // Delete all group tasks
+      await Task.deleteMany({ groupId: ownedGroups._id });
+      await AllTasks.deleteMany({ groupId: ownedGroups._id })
+      //Delete the group
+      await Group.deleteOne({ _id: ownedGroups._id });
+    }
+    // Remove the user from all assigned tasks
+    await AllTasks.deleteMany({ userId: user._id });
+    await Task.updateMany({}, { $pull: { assignedUsers: user.username }});
+    // Remove the user from all groups they're in
+    await Group.updateMany({}, { $pull: { members: user._id }})
+    // Delete the actual user
+    await User.deleteOne({ _id: user._id });
+    res.status(204).send(); // 204 No Content response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;

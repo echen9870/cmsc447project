@@ -11,8 +11,9 @@ const Calendar: React.FC = () => {
 
   const handleInputSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const [inputMonth, inputYear] = inputValue.split('-');
-    if (inputMonth && inputYear) {
+    const validDate = new RegExp(/^(0[1-9]|1[12])-(19|20)\d{2}$/);
+    if(validDate.test(inputValue)) {
+      const [inputMonth, inputYear] = inputValue.split('-');
       const newDate = new Date(Number(inputYear), Number(inputMonth) - 1, 1);
       if (!isNaN(newDate.getTime())) {
         setCurrentDate(newDate);
