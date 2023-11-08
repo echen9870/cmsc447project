@@ -143,9 +143,9 @@ router.post("/password_recovery", async (req, res) => {
 });
 
 router.delete("/delete_user/:username", async (req, res) => {
-  const username = req.params.username;
+  const usernameID = req.params.username;
   try {
-    const user = User.findOne({ username: username });
+    const user = User.findOne({ username: usernameID });
     // Delete all of the owned groups
     for(var ownedGroups = Group.find({ owner: user._id });
         ownedGroups.hasNext();
