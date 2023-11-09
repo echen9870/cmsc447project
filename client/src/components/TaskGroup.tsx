@@ -70,6 +70,7 @@ const TaskGroup = ({ username }: Props) => {
         `http://localhost:3000/task/get_task_group/${groupID}`
       );
       const tasks = taskResponse.data;
+      console.log(sessionStorage.getItem("currentGroupID"), "above members");
       //Get the members
       const memberResponse = await Axios.get(
         `http://localhost:3000/group/get_group_members/${groupID}`
