@@ -145,16 +145,16 @@ router.post("/password_recovery", async (req, res) => {
 router.delete("/delete_user/:username", async (req, res) => {
   const usernameID = req.params.username;
   try {
-    const user = User.findOne({ username: usernameID });
+    const user = await User.findOne({ username: usernameID });
     // Find all the owned groups
-    var ownedGroup = Group.findOne({ owner: user._id })
+    var ownedGroup = await Group.findOne({ owner: user._id });
     while(ownedGroup) {
       // Delete all group tasks
       await Task.deleteMany({ groupId: ownedGroup._id });
       await AllTasks.deleteMany({ groupId: ownedGroup._id })
       //Delete the group
       await Group.deleteOne({ _id: ownedGroup._id });
-      ownedGroup = Group.findOne({ owner: user._id });
+      ownedGroup = await Group.findOne({ owner: user._id });
     }
     // Remove the user from all assigned tasks
     await AllTasks.deleteMany({ userId: user._id });
