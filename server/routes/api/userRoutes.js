@@ -146,15 +146,15 @@ router.delete("/delete_user/:username", async (req, res) => {
   const usernameID = req.params.username;
   try {
     const user = User.findOne({ username: usernameID });
-    // Delete all of the owned groups
-    for(var ownedGroups = Group.find({ owner: user._id });
-        ownedGroups.hasNext();
-        ownedGroups = ownedGroups.next()) {
+    // Find all the owned groups
+    var ownedGroup = Group.findOne({ owner: user._id })
+    while(ownedGroup) {
       // Delete all group tasks
-      await Task.deleteMany({ groupId: ownedGroups._id });
-      await AllTasks.deleteMany({ groupId: ownedGroups._id })
+      await Task.deleteMany({ groupId: ownedGroup._id });
+      await AllTasks.deleteMany({ groupId: ownedGroup._id })
       //Delete the group
-      await Group.deleteOne({ _id: ownedGroups._id });
+      await Group.deleteOne({ _id: ownedGroup._id });
+      ownedGroup = Group.findOne({ owner: user._id });
     }
     // Remove the user from all assigned tasks
     await AllTasks.deleteMany({ userId: user._id });
