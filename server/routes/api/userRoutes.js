@@ -10,7 +10,7 @@ const crypto = require("crypto");
 const dotEnv = require("dotenv");
 const sgMail = require('@sendgrid/mail');
 
-dotEnv.config(); //config with envirnment setup
+dotEnv.config(); //config with environment setup
 sgMail.setApiKey(process.env.sgMailApiKey);
 
 //for password hashing
