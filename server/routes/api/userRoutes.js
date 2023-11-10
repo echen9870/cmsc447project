@@ -7,10 +7,11 @@ const Task = require("../../models/taskModel");
 const Group = require("../../models/groupModel");
 const AllTasks = require("../../models/AllTasksModel")
 const crypto = require("crypto");
+const dotEnv = require("dotenv");
 const sgMail = require('@sendgrid/mail');
 
-const sgMailApiKey = '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';
-sgMail.setApiKey(sgMailApiKey);
+dotEnv.config(); //config with envirnment setup
+sgMail.setApiKey(process.env.sgMailApiKey);
 
 //for password hashing
 const generateSecretKey = () => {
