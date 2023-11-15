@@ -28,6 +28,9 @@ interface Task {
 
 const TaskGroup = ({ username }: Props) => {
   const [listOfGroup, setListOfGroup] = useState<Group[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(
+    sessionStorage.getItem("currentGroupID") || null
+  );
   const [currentGroupInfo, setCurrentGroupInfo] = useState({
     groupID: sessionStorage.getItem("currentGroupID") || "",
     isOwner: false,
@@ -231,9 +234,15 @@ const TaskGroup = ({ username }: Props) => {
         </button>
         {listOfGroup.map((group) => (
           <button
-            className=" w-full block border-solid border-2 rounded-md border-gray-500 p-2 m-2"
             key={group._id}
-            onClick={() => onGroupChange(group._id)}
+            className={`w-full block border-solid border-2 rounded-md border-gray-500 p-2 m-2 ${
+              //show which group is selected by deep blue color
+              selectedGroup === group._id ? 'bg-blue-900 text-white' : ''
+            }`}
+            onClick={() => {
+              setSelectedGroup(group._id);
+              onGroupChange(group._id);
+            }}
           >
             {group.name}
           </button>

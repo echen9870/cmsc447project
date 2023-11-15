@@ -68,71 +68,95 @@ const AllTasks = ({ username }: Props) => {
       <div className="scrollable-container">
         <div className="tasks-list">
         <div className="category-section">
-            <h2>Overdue</h2>
-            {overdueTasks.map((task) => (
-              <div key={task._id} className="task-card">
-                <h2 className="task-name">{task.name}</h2>
-                <p className="task-description">{task.description}</p>
-                <p className="task-assigned-users">
-                  Assigned Users: {task.assignedUsers.join(", ")}
-                </p>
-                <p className={`task-status ${task.completed ? "done" : "undone"}`}>
-                  {task.completed ? "Done" : "Undone"}
-                </p>
-                <p className="task-due-date">Due Date: {task.dueAt}</p>
-              </div>
-            ))}
+            <h2 className="upcoming-title">Overdue</h2>
+            {overdueTasks.length > 0 ? (
+              <>
+              {overdueTasks.map((task) => (
+                <div key={task._id} className="task-card">
+                  <h2 className="task-name">{task.name}</h2>
+                  <p className="task-description">{task.description}</p>
+                  <p className="task-assigned-users">
+                    Assigned Users: {task.assignedUsers.join(", ")}
+                  </p>
+                  <p className={`task-status ${task.completed ? "done" : "undone"}`}>
+                    {task.completed ? "Done" : "Undone"}
+                  </p>
+                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                </div>
+              ))}
+              </>
+            ) : (
+              <p className="task-description">No overdue tasks.</p>
+            )}
           </div>
 
           <div className="category-section">
-            <h2>Due Today</h2>
-            {dueTodayTasks.map((task) => (
-              <div key={task._id} className="task-card">
-                <h2 className="task-name">{task.name}</h2>
-                <p className="task-description">{task.description}</p>
-                <p className="task-assigned-users">
-                  Assigned Users: {task.assignedUsers.join(", ")}
-                </p>
-                <p className={`task-status ${task.completed ? "done" : "undone"}`}>
-                  {task.completed ? "Done" : "Undone"}
-                </p>
-                <p className="task-due-date">Due Date: {task.dueAt}</p>
-              </div>
-            ))}
+            <h2 className="upcoming-title">Due Today</h2>
+            {dueTodayTasks.length > 0 ? (
+              <>
+              {dueTodayTasks.map((task) => (
+                <div key={task._id} className="task-card">
+                  <h2 className="task-name">{task.name}</h2>
+                  <p className="task-description">{task.description}</p>
+                  <p className="task-assigned-users">
+                    Assigned Users: {task.assignedUsers.join(", ")}
+                  </p>
+                  <p className={`task-status ${task.completed ? "done" : "undone"}`}>
+                    {task.completed ? "Done" : "Undone"}
+                  </p>
+                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                </div>
+              ))}
+              </>
+            ) : (
+              <p className="task-description">No tasks due today.</p>
+            )}
           </div>
 
           <div className="category-section">
-            <h2>Due This Week</h2>
-            {dueThisWeekTasks.map((task) => (
-              <div key={task._id} className="task-card">
-                <h2 className="task-name">{task.name}</h2>
-                <p className="task-description">{task.description}</p>
-                <p className="task-assigned-users">
-                  Assigned Users: {task.assignedUsers.join(", ")}
-                </p>
-                <p className={`task-status ${task.completed ? "done" : "undone"}`}>
-                  {task.completed ? "Done" : "Undone"}
-                </p>
-                <p className="task-due-date">Due Date: {task.dueAt}</p>
-              </div>
-            ))}
+            <h2 className="upcoming-title">Due This Week</h2>
+            {dueThisWeekTasks.length > 0 ? (
+              <>
+              {dueThisWeekTasks.map((task) => (
+                <div key={task._id} className="task-card">
+                  <h2 className="task-name">{task.name}</h2>
+                  <p className="task-description">{task.description}</p>
+                  <p className="task-assigned-users">
+                    Assigned Users: {task.assignedUsers.join(", ")}
+                  </p>
+                  <p className={`task-status ${task.completed ? "done" : "undone"}`}>
+                    {task.completed ? "Done" : "Undone"}
+                  </p>
+                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                </div>
+              ))}
+              </>
+            ) : (
+              <p className="task-description">No tasks due this week.</p>
+            )}  
           </div>
 
           <div className="category-section">
-            <h2>Upcoming</h2>
-            {everythingElseTasks.map((task) => (
-              <div key={task._id} className="task-card">
-                <h2 className="task-name">{task.name}</h2>
-                <p className="task-description">{task.description}</p>
-                <p className="task-assigned-users">
-                  Assigned Users: {task.assignedUsers.join(", ")}
-                </p>
-                <p className={`task-status ${task.completed ? "done" : "undone"}`}>
-                  {task.completed ? "Done" : "Undone"}
-                </p>
-                <p className="task-due-date">Due Date: {task.dueAt}</p>
-              </div>
-            ))}
+            <h2 className="upcoming-title">Upcoming</h2>
+            {everythingElseTasks.length > 0 ? (
+              <>
+              {everythingElseTasks.map((task) => (
+                <div key={task._id} className="task-card">
+                  <h2 className="task-name">{task.name}</h2>
+                  <p className="task-description">{task.description}</p>
+                  <p className="task-assigned-users">
+                    Assigned Users: {task.assignedUsers.join(", ")}
+                  </p>
+                  <p className={`task-status ${task.completed ? "done" : "undone"}`}>
+                    {task.completed ? "Done" : "Undone"}
+                  </p>
+                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                </div>
+              ))}
+              </>
+            ) : (
+              <p className="task-description">No upcoming tasks.</p>
+            )}
           </div>
         </div>
       </div>

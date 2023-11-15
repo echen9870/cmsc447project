@@ -68,7 +68,11 @@
   color: #777;
 }
 .scrollable-container {
-  max-height: 600px; 
+  max-height: 70vh;
   overflow-y: auto; 
+}
+.upcoming-title {
+  font-family: serif;
+  font-size: 23px;
 }
 
