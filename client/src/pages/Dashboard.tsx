@@ -1,8 +1,9 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Axios from "axios";
 import TaskGroup from "../components/TaskGroup";
 import Calendar from "../components/Calendar";
 import AllTasks from "../components/AllTasks";
+import profileImage from "./profile-image.jpg";
 
 interface Props {
   onLogout: (username: string) => void;
@@ -11,82 +12,153 @@ interface Props {
 
 export const Dashboard = ({ onLogout, username }: Props) => {
   const storedView = sessionStorage.getItem("selectedView");
-  const [selectedView, setSelectedView] = useState(storedView || "TaskGroup");
+  const [selectedView, setSelectedView] = useState<string>(storedView || "TaskGroup");
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const toggleProfile = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
+
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     sessionStorage.setItem("selectedView", selectedView);
+
+    // Add a click event listener to handle closing the profile dropdown
+    const handleClickOutside = (event: Event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        // Clicked outside the profile circle, close the dropdown
+        setIsProfileOpen(false);
+      }
+    };
+
+    // Attach the event listener
+    document.addEventListener("click", handleClickOutside);
+
+    // Cleanup: Remove the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, [selectedView]);
 
-  const handleSelectView = (view: SetStateAction<string>) => {
+  const handleSelectView = (view: string) => {
     setSelectedView(view);
+    toggleProfile(); // Close the profile when a view is selected
   };
 
   const handleLogout = () => {
-    //clear out the sessionStorage
-    sessionStorage.removeItem("currentGroupID"); 
+    sessionStorage.removeItem("currentGroupID");
     sessionStorage.removeItem("selectedView");
     onLogout("");
   };
- 
-  const handleDeleteUser = () => {
-    console.log("you clicked delete account");
-  
-    // Add a confirmation dialog
-    const isConfirmed = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
-  
+
+  const handleDeleteUser = async () => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+
     if (isConfirmed) {
-      // User confirmed, proceed with the deletion logic
-      console.log("Deleting user account...");
-      // Add your deletion route call
-      Axios.delete(`http://localhost:3000/auth/delete_user/${username}`);
-      // send back to login page
-      handleLogout()
-    } else {
-      // User cancelled the deletion
-      console.log("User cancelled account deletion.");
+      try {
+        await Axios.delete(`http://localhost:3000/auth/delete_user/${username}`);
+        handleLogout();
+      } catch (error) {
+        console.error("Error deleting user account:", error);
+      }
     }
-  }
+
+    toggleProfile(); // Close the profile after deletion (whether successful or not)
+  };
 
   return (
-    <div className="flex flex-col bg-prismDarkPurple h-screen">
-      <div>
-        {/*Hello user, delete account option */}
-        <p className="absolute left-0 top-0 text-white p-4">Hello {username} , 
-          <button 
+    <div className="flex flex-col bg-prismDarkPurple h-screen relative">
+      {/* Dropdown menu */}
+      {isProfileOpen && (
+        <div className="absolute left-1 mt-2 bg-white rounded-md shadow-md text-black-800 p-4">
+          <img
+            src={profileImage}
+            className="w-10 h-10 rounded-full mb-2"
+            alt="User Profile"
+          />
+          <p className="mb-2">Hello {username}!</p>
+          <button
+            onClick={() => handleSelectView("TaskGroup")}
+            className="block px-4 py-2 w-full text-left mb-2"
+          >
+            Switch to Task Group
+          </button>
+          <button
+            onClick={() => handleSelectView("Calendar")}
+            className="block px-4 py-2 w-full text-left mb-2"
+          >
+            Switch to Calendar
+          </button>
+          <button
+            onClick={() => handleSelectView("AllTasks")}
+            className="block px-4 py-2 w-full text-left mb-2"
+          >
+            Switch to All Tasks
+          </button>
+          <button
             onClick={handleDeleteUser}
-            className="bg-gray-500 text-white px-2 py-1 rounded-md content-end"
+            className="block px-4 py-2 w-full text-left text-red-500"
           >
             Delete Account
           </button>
-        </p>
-        <div className="flex justify-end items-end outline outline-gray-400 p-4 text-white">
+        </div>
+      )}
+  
+      {/* Dropdown button and Navigation buttons */}
+      <div className="flex justify-between items-center outline p-6 text-white">
+        {/* Dropdown button */}
+        <div className="" ref={profileRef}>
+          <button
+            onClick={toggleProfile}
+            className="flex items-center bg-gray-900 rounded-full cursor-pointer p-4"
+          >
+            <img
+              src={profileImage}
+              alt="User Profile"
+              className="w-8 h-8 rounded-full mr-2"
+            />
+            <span className="text-white">{username}</span>
+          </button>
+  
+          {/* Line underneath dropdown button */}
+          {isProfileOpen && (
+            <div className="absolute left-0 bottom-0 w-full h-1 bg-gray-400" />
+          )}
+        </div>
+  
+        {/* Navigation buttons */}
+        <div className="flex space-x-1">
+          {/* Rest of your buttons */}
           <button
             onClick={() => handleSelectView("TaskGroup")}
-            className={`bg-blue-500 text-white px-4 py-2 rounded-md content-end ${selectedView === "TaskGroup" ? "bg-opacity-100" : "bg-opacity-50"}`}
+            className={`bg-blue-500 text-white px-4 py-2 rounded-md ${selectedView === "TaskGroup" ? "bg-opacity-100" : "bg-opacity-50"}`}
           >
             Task Group
           </button>
           <button
             onClick={() => handleSelectView("Calendar")}
-            className={`bg-blue-500 text-white px-4 py-2 rounded-md content-end ${selectedView === "Calendar" ? "bg-opacity-100" : "bg-opacity-50"}`}
+            className={`bg-blue-500 text-white px-4 py-2 rounded-md ${selectedView === "Calendar" ? "bg-opacity-100" : "bg-opacity-50"}`}
           >
             Calendar
           </button>
           <button
             onClick={() => handleSelectView("AllTasks")}
-            className={`bg-blue-500 text-white px-4 py-2 rounded-md content-end ${selectedView === "AllTasks" ? "bg-opacity-100" : "bg-opacity-50"}`}
+            className={`bg-blue-500 text-white px-4 py-2 rounded-md ${selectedView === "AllTasks" ? "bg-opacity-100" : "bg-opacity-50"}`}
           >
             All Tasks
           </button>
           <button
             onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded-md content-end"
+            className="bg-red-500 text-white px-4 py-2 rounded-md"
           >
             Logout
           </button>
         </div>
       </div>
-
+  
       {/* Main Content */}
       <div className="p-2 bg-prismDarkPurple text-white flex-grow">
         {selectedView === "TaskGroup" && <TaskGroup username={username} />}
@@ -94,7 +166,8 @@ export const Dashboard = ({ onLogout, username }: Props) => {
         {selectedView === "AllTasks" && <AllTasks username={username} />}
       </div>
     </div>
-  );
+  );  
+  
 };
 
 export default Dashboard;
