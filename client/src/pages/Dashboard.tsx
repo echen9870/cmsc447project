@@ -162,7 +162,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
       {/* Main Content */}
       <div className="p-2 bg-prismDarkPurple text-white flex-grow">
         {selectedView === "TaskGroup" && <TaskGroup username={username} />}
-        {selectedView === "Calendar" && <Calendar />}
+        {selectedView === "Calendar" && <Calendar username={username}/>}
         {selectedView === "AllTasks" && <AllTasks username={username} />}
       </div>
     </div>

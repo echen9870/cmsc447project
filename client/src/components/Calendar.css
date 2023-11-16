@@ -1,0 +1,135 @@
+/* Calendar.css */
+/* Add this to your Calendar.css file */
+
+.day-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.day-label {
+  padding: 10px;
+  background-color: #b9b8b8;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  margin: 0; /* Remove default margin for h2 */
+  margin-right: auto; /* Move h2 to the most left */
+}
+
+.header button {
+  padding: 5px 10px;
+  background-color: #02c862;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.header button:hover {
+  background-color: #019548;
+}
+
+
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.today {
+  background-color: #a0d3f7;
+}
+
+.selected-day {
+  margin-top: 20px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.calendar {
+  max-width: 100%;
+  margin: 20px;
+  text-align: center;
+}
+
+.day {
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+
+.outside {
+  color: #aaa;
+}
+
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+}
+
+.search input {
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.search button {
+  padding: 5px 10px;
+  background-color: #02c862;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.search button:hover {
+  background-color: #019548;
+}
+
+.today-button{
+  padding: 5px 10px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+.task-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  z-index: 999;
+  max-height: 80%; /* Set a maximum height for the modal */
+  overflow-y: auto;
+}
+
+.task-modal.visible {
+  display: block;
+}
+
+
