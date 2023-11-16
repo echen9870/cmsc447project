@@ -250,10 +250,8 @@ const TaskGroup = ({ username }: Props) => {
       </aside>
 
       <main className="flex-1 p-4 h-screen flex flex-col pb-40">
-        {!currentGroupInfo.groupID && (
-          <h1>Select or create a group to get started</h1>
-        )}
-        {currentGroupInfo.groupID && (
+        {currentGroupInfo.groupID ? (
+        <>
           <TaskHeader
             refreshTask={handleRefreshTask}
             groupID={currentGroupInfo.groupID}
@@ -262,44 +260,50 @@ const TaskGroup = ({ username }: Props) => {
             onGroupDelete={() => handleGroupDelete(currentGroupInfo.groupID)}
             onTaskAdd={() => handleOnTaskAdd()}
           ></TaskHeader>
-        )}
-        <div className="h-4/5 overflow-y-auto">
-          <div>
-            {currentGroupInfo.groupID && (
-              <h1 className="text-white">Uncompleted Tasks</h1>
-            )}
-            {currentGroupInfo.tasks &&
-              (currentGroupInfo.tasks as Task[]).map(
-                (task) =>
-                  !task.completed && (
-                    <Task
-                      key={task._id}
-                      {...task}
-                      members={currentGroupInfo.members}
-                      onTaskRefresh={handleRefreshTask}
-                    ></Task>
-                  )
-              )}
-          </div>
-          <div className="flex-1 border-t-2 border-gray-400"></div>{" "}
-          <div>
-            {currentGroupInfo.groupID && (
-              <h1 className="text-white">Completed Tasks</h1>
-            )}
-            {currentGroupInfo.tasks &&
-              (currentGroupInfo.tasks as Task[]).map(
-                (task) =>
-                  task.completed && (
-                    <Task
-                      key={task._id}
-                      {...task}
-                      members={currentGroupInfo.members}
-                      onTaskRefresh={handleRefreshTask}
-                    ></Task>
-                  )
-              )}
-          </div>
-        </div>
+          {currentGroupInfo.tasks && (currentGroupInfo.tasks as Task[]).length > 0 ? (
+            <div className="h-4/5 overflow-y-auto">
+              <div>
+                <h1 className="text-white upcoming-title">Uncompleted Tasks</h1>
+                {currentGroupInfo.tasks &&
+                  (currentGroupInfo.tasks as Task[]).map(
+                    (task) =>
+                      !task.completed && (
+                        <Task
+                          key={task._id}
+                          {...task}
+                          members={currentGroupInfo.members}
+                          onTaskRefresh={handleRefreshTask}
+                        ></Task>
+                      )
+                  )}
+              </div>
+              <div className="flex-1 border-t-2 border-gray-400"></div>{" "}
+              <div>
+                <h1 className="text-white upcoming-title">Completed Tasks</h1>
+                {currentGroupInfo.tasks &&
+                  (currentGroupInfo.tasks as Task[]).map(
+                    (task) =>
+                      task.completed && (
+                        <Task
+                          key={task._id}
+                          {...task}
+                          members={currentGroupInfo.members}
+                          onTaskRefresh={handleRefreshTask}
+                        ></Task>
+                      )
+                  )}
+              </div>
+            </div>
+          ) : (
+            <div className="h-4/5 overflow-y-auto">
+              <p className="upcoming-title">Please Add Task To Start!</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <h1 className="upcoming-title">Select or create a group to get started</h1>
+      )}
+
         {/* Border line */}
         <div className="border-t-2 border-gray-400"></div> {/* Border line */}
         <div className=" overflow-y-auto ">
