@@ -71,6 +71,9 @@ const Task = (task: Props) => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
+    // If the field is 'dueAt', convert the local date to a string
+    //const updatedValue = name === 'dueAt' ? new Date(value).toLocaleDateString() : value;
+    
     setCurTask((prev) => ({
       ...prev,
       [name]: value,

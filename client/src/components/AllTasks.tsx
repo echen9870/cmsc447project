@@ -19,10 +19,13 @@ const AllTasks = ({ username }: Props) => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    const apiEndpoint = `http://localhost:3000/task/get_all_tasks/${username}`;
+    // Function to fetch all tasks
+    const fetchAllTasks = async () => {
+      const apiEndpoint = `http://localhost:3000/task/get_all_tasks/${username}`;
 
-    Axios.get(apiEndpoint)
-      .then((response) => {
+      try {
+        const response = await Axios.get(apiEndpoint);
+
         if (response.data) {
           // Sort tasks by dueAt date in ascending order (sooner due dates first)
           const sortedTasks = response.data.sort(
@@ -32,10 +35,14 @@ const AllTasks = ({ username }: Props) => {
 
           setTasks(sortedTasks);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching tasks:", error);
-      });
+      }
+    };
+
+    // Call the functions when the component mounts
+    fetchAllTasks();
+    
   }, [username]);
 
   // Categorize tasks into "Due Today," "Due This Week," and "Upcoming"

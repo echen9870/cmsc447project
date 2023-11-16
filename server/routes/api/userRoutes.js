@@ -7,21 +7,22 @@ const Task = require("../../models/taskModel");
 const Group = require("../../models/groupModel");
 const AllTasks = require("../../models/AllTasksModel")
 const crypto = require("crypto");
-const dotEnv = require("dotenv");
-const sgMail = require('@sendgrid/mail');
-
-dotEnv.config(); //config with environment setup
-sgMail.setApiKey(process.env.sgMailApiKey);
+const nodemailer = require('nodemailer');
 
 //for password hashing
 const generateSecretKey = () => {
   return crypto.randomBytes(64).toString("hex");
 };
 
-// for password recovery
-const generateVerificationCode = () => {
-  return crypto.randomBytes(3).toString('hex').toUpperCase();
-};
+// Create a transporter using your email service (e.g., Gmail)
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  service: 'gmail',
+  auth: {
+    user: "the.task.meister.team@gmail.com",
+    pass: "srcv zckb snnj whkw",
+  },
+});
 
 // Route for user registration
 router.post("/create_user", async (req, res) => {
@@ -166,16 +167,16 @@ router.post("/password_recovery", async (req, res) => {
     user.verificationCode = verificationCode;
     await user.save();
 
-    // Send verification code email using SendGrid
+    // Send verification code email using nodemailer
     const emailData = {
       to: user.email,
-      from: 'vt69093@umbc.edu', // Update with your sender email
+      from: 'Task Meister the.task.meister.team@gmail.com', 
       subject: 'Password Reset Verification Code',
       text: `Your verification code is: ${verificationCode}`,
       html: `<p>Hello,<br> Your verification code is: <b>${verificationCode}</b></p>`
     };
 
-    await sgMail.send(emailData);
+    await transporter.sendMail(emailData);
 
     return res.status(200).json({ message: "Verification code sent. Check your email for instructions." });
   } catch (error) {
@@ -256,16 +257,16 @@ router.post("/verify_and_reset_password", async (req, res) => {
     user.verificationCode = null; // Reset the verification code
     await user.save();
 
-    // Send password updated email notification using SendGrid
+    // Send password updated email notification using nodemailer
     const emailData = {
       to: user.email,
-      from: 'vt69093@umbc.edu', // Update with your sender email
+      from: 'Task Meister the.task.meister.team@gmail.com',
       subject: 'Password Updated',
       text: `Your password has been successfully updated. If you didn't perform this action, please contact us.`,
       html: `<p>Hello,<br> Your password has been successfully updated. If you didn't perform this action, please contact us.</p>`
     };
 
-    await sgMail.send(emailData);
+    await transporter.sendMail(emailData);
 
     return res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
@@ -273,7 +274,5 @@ router.post("/verify_and_reset_password", async (req, res) => {
     res.status(500).json({ error: "An error occurred" });
   }
 });
-
-
 
 module.exports = router;
