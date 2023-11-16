@@ -1,6 +1,3 @@
-/* Calendar.css */
-/* Add this to your Calendar.css file */
-
 .day-labels {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -25,8 +22,8 @@
 }
 
 .header h2 {
-  margin: 0; /* Remove default margin for h2 */
-  margin-right: auto; /* Move h2 to the most left */
+  margin: 0; 
+  margin-right: auto;
 }
 
 .header button {
@@ -42,7 +39,6 @@
 }
 
 
-
 .days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -50,7 +46,7 @@
 }
 
 .today {
-  background-color: #a0d3f7;
+  border: 5px solid #a0d3f7 !important;
 }
 
 .selected-day {
@@ -124,7 +120,7 @@ body {
   background-color: white;
   padding: 20px;
   z-index: 999;
-  max-height: 80%; /* Set a maximum height for the modal */
+  max-height: 80%; /*set maximum height for the modal*/
   overflow-y: auto;
 }
 

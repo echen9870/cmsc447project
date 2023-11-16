@@ -1,7 +1,6 @@
-// Calendar.js
-
 import { useEffect, useState, ChangeEvent } from "react";
 import { format, addMonths, subMonths, startOfMonth, eachDayOfInterval, isSameMonth, isToday, getDay, isSameDay } from 'date-fns';
+//import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import Axios from "axios";
 import './Calendar.css';
 
@@ -76,7 +75,6 @@ const Calendar = ({ username }: Props) => {
   // Add days of the month
   daysInMonth.forEach((day) => {
     const tasksDueOnDay = tasks.filter((task) => isSameDay(new Date(task.dueAt), day));
-    console.log(`Tasks due on ${format(day, 'yyyy-MM-dd')}:`, tasksDueOnDay);
     
     daysOfWeek.push(
       <div
@@ -102,8 +100,11 @@ const Calendar = ({ username }: Props) => {
     const parsedMonth = parseInt(inputMonth, 10);
     const parsedYear = parseInt(inputYear, 10);
 
-    if (!isNaN(parsedMonth) && !isNaN(parsedYear)) {
+    if (!isNaN(parsedMonth) && parsedMonth >= 1 && parsedMonth <= 12 && !isNaN(parsedYear) && parsedYear >= 2000 && parsedYear <= 2500) {
       setCurrentDate(new Date(parsedYear, parsedMonth - 1, 1));
+    }  
+    else {
+      alert("Please choose a Year and Month between 2000 and 2500");
     }
   };
 
@@ -113,7 +114,6 @@ const Calendar = ({ username }: Props) => {
 
   const handleDayClick = (day: Date) => {
     const tasksDueOnDay = tasks.filter((task) => isSameDay(new Date(task.dueAt), day));
-    console.log(`Tasks due on ${format(day, 'yyyy-MM-dd')}:`, tasksDueOnDay);
   
     if (tasksDueOnDay.length > 0) {
       setSelectedTask(tasksDueOnDay);
@@ -181,6 +181,7 @@ const Calendar = ({ username }: Props) => {
           {selectedTask.map((task) => (
             <div key={task._id} className="task-card">
               <h2 className="task-name">{task.name}</h2>
+              <p className="bg-black">{task.dueAt}</p> 
               <p className="task-description">{task.description}</p>
               <p className="task-assigned-users">
                 Assigned Users: {task.assignedUsers.join(", ")}
