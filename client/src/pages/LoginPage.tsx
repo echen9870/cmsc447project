@@ -38,7 +38,7 @@ const LoginPage = ({ onLogin }: Props) => {
     try {
       if (isLogin) {
         const response = await Axios.post(
-          "http://localhost:3000/auth/login_user",
+          "https://todolist-taskmeister-78653fbaf01e.herokuapp.com/auth/login_user",
           {
             username,
             password,
@@ -51,7 +51,7 @@ const LoginPage = ({ onLogin }: Props) => {
       } else {
         // If it's a sign-up, send a POST request to your sign-up endpoint
         const response = await Axios.post(
-          "http://localhost:3000/auth/create_user",
+          "https://todolist-taskmeister-78653fbaf01e.herokuapp.com/auth/create_user",
           {
             username,
             password,

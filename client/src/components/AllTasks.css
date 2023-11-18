@@ -1,5 +1,3 @@
-/* AllTasks.css */
-
 /* Container styles */
 .all-tasks-container {
   max-width: 800px;
@@ -54,11 +52,11 @@
 }
 
 .task-status.done {
-  color: #22b24c; /* Green color for "Done" */
+  color: #22b24c; 
 }
 
 .task-status.undone {
-  color: #e74c3c; /* Red color for "Undone" */
+  color: #e74c3c;
 }
 
 /* Due date styles */

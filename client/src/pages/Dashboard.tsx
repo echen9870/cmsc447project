@@ -59,7 +59,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
 
     if (isConfirmed) {
       try {
-        await Axios.delete(`http://localhost:3000/auth/delete_user/${username}`);
+        await Axios.delete(`https://todolist-taskmeister-78653fbaf01e.herokuapp.com/auth/delete_user/${username}`);
         handleLogout();
       } catch (error) {
         console.error("Error deleting user account:", error);

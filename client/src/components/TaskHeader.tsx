@@ -23,7 +23,7 @@ const Taskheader = ({
   const onTaskDeleteAll = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/group/delete_all_tasks/${groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/delete_all_tasks/${groupID}`
       );
       console.log(response); 
     } catch (error) {
@@ -37,7 +37,7 @@ const Taskheader = ({
     try {
       const endpoint = isFinish ? "finish_all_tasks" : "unfinish_all_tasks";
       const response = await axios.put(
-        `http://localhost:3000/group/${endpoint}/${groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/${endpoint}/${groupID}`
       );
       console.log(response);
     } catch (error) {

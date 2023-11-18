@@ -27,11 +27,10 @@ const Calendar = ({ username }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-
   useEffect(() => {
     // Function to fetch all tasks
     const fetchAllTasks = async () => {
-      const apiEndpoint = `http://localhost:3000/task/get_all_tasks/${username}`;
+      const apiEndpoint = `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/get_all_tasks/${username}`;
 
       try {
         const response = await Axios.get(apiEndpoint);
@@ -55,8 +54,8 @@ const Calendar = ({ username }: Props) => {
     
   }, [username]);
 
-  const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
-  const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
+  const nextMonth = () => {setShowModal(false); setCurrentDate(addMonths(currentDate, 1));};
+  const prevMonth = () => {setShowModal(false); setCurrentDate(subMonths(currentDate, 1));};
 
   const firstDayOfMonth = getDay(startOfMonth(currentDate));
   const daysOfWeek = [];
@@ -109,6 +108,7 @@ const Calendar = ({ username }: Props) => {
   };
 
   const handleGoToToday = () => {
+    setShowModal(false);
     setCurrentDate(new Date());
   };
 
@@ -121,10 +121,32 @@ const Calendar = ({ username }: Props) => {
       setSelectedDate(day);
     } else {
       setSelectedDate(day);
+      setShowModal(false);
     }
   };
-  
-  
+
+  //change the format of how the due date is displayed
+  const formatDueDate = (dueAt: string) => {
+    if (!dueAt) {
+      return ""; // Return nothing if no date is passed
+    }
+    const date = new Date(dueAt);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const timeString = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+
+    return `${month}/${day}/${year}, ${timeString}`;
+  };
+
+  const handleSearchAndCloseModal = () => {
+    setShowModal(false);
+    handleSearch();
+  };
 
   return (
     <div className="calendar">
@@ -156,7 +178,7 @@ const Calendar = ({ username }: Props) => {
             min="2000"
             max="2500"
           />
-          <button onClick={handleSearch}>Search</button>
+          <button onClick={handleSearchAndCloseModal}>Search</button>
         </div>
       </div>
       <div className="day-labels">
@@ -189,6 +211,7 @@ const Calendar = ({ username }: Props) => {
               <p className={`task-status ${task.completed ? "done" : "undone"}`}>
                 {task.completed ? "Done" : "Undone"}
               </p>
+              <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
             </div>
           ))}
           <button className="bg-gray-900" onClick={() => setShowModal(false)}>Close</button>

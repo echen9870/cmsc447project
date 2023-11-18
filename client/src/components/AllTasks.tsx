@@ -21,7 +21,7 @@ const AllTasks = ({ username }: Props) => {
   useEffect(() => {
     // Function to fetch all tasks
     const fetchAllTasks = async () => {
-      const apiEndpoint = `http://localhost:3000/task/get_all_tasks/${username}`;
+      const apiEndpoint = `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/get_all_tasks/${username}`;
 
       try {
         const response = await Axios.get(apiEndpoint);

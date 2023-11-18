@@ -59,7 +59,7 @@ const Task = (task: Props) => {
   const handleEditTaskSubmit = async () => {
     try {
       const response = await Axios.put(
-        `http://localhost:3000/task/edit_task`,
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/edit_task`,
         curTask
       );
       console.log(response);
@@ -74,7 +74,7 @@ const Task = (task: Props) => {
     try {
       console.log(!task.completed);
       const response = await Axios.put(
-        `http://localhost:3000/task/toggle_finish_task/${task._id}`,
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/toggle_finish_task/${task._id}`,
         { completed: task.completed }
       );
       console.log(response.data);
@@ -89,9 +89,6 @@ const Task = (task: Props) => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-    // If the field is 'dueAt', convert the local date to a string
-    //const updatedValue = name === 'dueAt' ? new Date(value).toLocaleDateString() : value;
-    
     setCurTask((prev) => ({
       ...prev,
       [name]: value,
@@ -104,7 +101,7 @@ const Task = (task: Props) => {
   const onTaskDelete = async () => {
     try {
       const response = await Axios.delete(
-        `http://localhost:3000/task/delete_task/${task._id}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/delete_task/${task._id}`
       );
       console.log(response);
     } catch (error) {
@@ -121,7 +118,7 @@ const Task = (task: Props) => {
       // Assigns the user to the task
       try {
         const response = await Axios.put(
-          `http://localhost:3000/task/add_member_to_task/${task._id}/${selectedAssignMember}`
+          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/add_member_to_task/${task._id}/${selectedAssignMember}`
         );
         console.log(response);
       } catch (error) {
@@ -131,7 +128,7 @@ const Task = (task: Props) => {
       //Unassign the user from the task
       try {
         const response = await Axios.put(
-          `http://localhost:3000/task/remove_member_to_task/${task._id}/${selectedAssignMember}`
+          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/remove_member_to_task/${task._id}/${selectedAssignMember}`
         );
         console.log(response);
       } catch (error) {

@@ -70,18 +70,18 @@ const TaskGroup = ({ username }: Props) => {
     try {
       //Get the tasks
       const taskResponse = await Axios.get(
-        `http://localhost:3000/task/get_task_group/${groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/get_task_group/${groupID}`
       );
       const tasks = taskResponse.data;
       console.log(sessionStorage.getItem("currentGroupID"), "above members");
       //Get the members
       const memberResponse = await Axios.get(
-        `http://localhost:3000/group/get_group_members/${groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/get_group_members/${groupID}`
       );
       const member = memberResponse.data;
       //Check if the user is the owner
       const response = await Axios.get(
-        `http://localhost:3000/group/check_owner/${username}/${groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/check_owner/${username}/${groupID}`
       );
 
       setCurrentGroupInfo({
@@ -100,7 +100,7 @@ const TaskGroup = ({ username }: Props) => {
   const getListOfGroupIDs = async () => {
     try {
       const response = await Axios.get(
-        `http://localhost:3000/group/get_groups/${username}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/get_groups/${username}`
       );
       setListOfGroup(response.data);
     } catch (error) {
@@ -117,7 +117,7 @@ const TaskGroup = ({ username }: Props) => {
     const { name, members } = formData;
     try {
       const response = await Axios.post(
-        "http://localhost:3000/group/create_group",
+        "https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/create_group",
         {
           name,
           members,
@@ -134,7 +134,7 @@ const TaskGroup = ({ username }: Props) => {
   const handleGroupDelete = async (groupID: string) => {
     try {
       const response = await Axios.delete(
-        `http://localhost:3000/group/delete_group/${groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/delete_group/${groupID}`
       );
       console.log(response);
       await getListOfGroupIDs();
@@ -156,7 +156,7 @@ const TaskGroup = ({ username }: Props) => {
   ) => {
     try {
       const response = await Axios.put(
-        `http://localhost:3000/group/edit_group_name/${groupID}/${groupNewName}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/edit_group_name/${groupID}/${groupNewName}`
       );
       console.log(response);
       await getListOfGroupIDs();
@@ -169,7 +169,7 @@ const TaskGroup = ({ username }: Props) => {
   const handleRefreshTask = async () => {
     try {
       const taskResponse = await Axios.get(
-        `http://localhost:3000/task/get_task_group/${currentGroupInfo.groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/get_task_group/${currentGroupInfo.groupID}`
       );
       const tasks = taskResponse.data;
       setCurrentGroupInfo((prevGroupInfo) => ({
@@ -185,7 +185,7 @@ const TaskGroup = ({ username }: Props) => {
   const handleOnTaskAdd = async () => {
     try {
       const response = await Axios.post(
-        `http://localhost:3000/task/create_task`,
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/create_task`,
         newTask
       );
       await handleRefreshTask();
@@ -199,7 +199,7 @@ const TaskGroup = ({ username }: Props) => {
   const handleAddMember = async (username: string) => {
     try {
       const response = await Axios.put(
-        `http://localhost:3000/group/add_member/${username}/${currentGroupInfo.groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/add_member/${username}/${currentGroupInfo.groupID}`
       );
 
       console.log(response);
@@ -212,7 +212,7 @@ const TaskGroup = ({ username }: Props) => {
   const handleDeleteMember = async (username: string) => {
     try {
       const response = await Axios.put(
-        `http://localhost:3000/group/remove_member/${username}/${currentGroupInfo.groupID}`
+        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/remove_member/${username}/${currentGroupInfo.groupID}`
       );
 
       console.log(response);
@@ -263,7 +263,7 @@ const TaskGroup = ({ username }: Props) => {
           {currentGroupInfo.tasks && (currentGroupInfo.tasks as Task[]).length > 0 ? (
             <div className="h-4/5 overflow-y-auto">
               <div>
-                <h1 className="text-white upcoming-title">Uncompleted Tasks</h1>
+                <h1>Uncompleted Task(s):</h1>
                 {currentGroupInfo.tasks &&
                   (currentGroupInfo.tasks as Task[]).map(
                     (task) =>
@@ -279,7 +279,7 @@ const TaskGroup = ({ username }: Props) => {
               </div>
               <div className="flex-1 border-t-2 border-gray-400"></div>{" "}
               <div>
-                <h1 className="text-white upcoming-title">Completed Tasks</h1>
+                <h1>Completed Task(s):</h1>
                 {currentGroupInfo.tasks &&
                   (currentGroupInfo.tasks as Task[]).map(
                     (task) =>
