@@ -19,13 +19,13 @@ interface Task {
 
 const Calendar = ({ username }: Props) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [inputMonth, setInputMonth] = useState('');
   const [inputYear, setInputYear] = useState('');
   const [tasks, setTasks] = useState<Task[]>([]);
   // Add these state variables
   const [showModal, setShowModal] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task[] | null>(null);
 
   useEffect(() => {
     // Function to fetch all tasks
@@ -114,7 +114,7 @@ const Calendar = ({ username }: Props) => {
 
   const handleDayClick = (day: Date) => {
     const tasksDueOnDay = tasks.filter((task) => isSameDay(new Date(task.dueAt), day));
-  
+    
     if (tasksDueOnDay.length > 0) {
       setSelectedTask(tasksDueOnDay);
       setShowModal(true);
@@ -201,7 +201,7 @@ const Calendar = ({ username }: Props) => {
       <div className={`task-modal ${showModal ? 'visible' : ''}`}>
       {selectedTask && (
         <div>
-          {selectedTask.map((task) => (
+          {Array.isArray(selectedTask) && selectedTask.map((task: Task) => (
             <div key={task._id} className="task-card">
               <h2 className="task-name">{task.name}</h2>
               <p className="task-description">{task.description}</p>
