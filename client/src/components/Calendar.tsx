@@ -181,7 +181,6 @@ const Calendar = ({ username }: Props) => {
           {selectedTask.map((task) => (
             <div key={task._id} className="task-card">
               <h2 className="task-name">{task.name}</h2>
-              <p className="bg-black">{task.dueAt}</p> 
               <p className="task-description">{task.description}</p>
               <p className="task-assigned-users">
                 Assigned Users: {task.assignedUsers.join(", ")}

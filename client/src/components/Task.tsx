@@ -37,6 +37,24 @@ const Task = (task: Props) => {
     }
   }, [isExpanded, textAreaRef.current, curTask.description]);
 
+  //change the format of how the due date is displayed
+  const formatDueDate = (dueAt: string) => {
+    if (!dueAt) {
+      return ""; // Return nothing if no date is passed
+    }
+    const date = new Date(dueAt);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const timeString = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+  
+    return `${month}/${day}/${year}, ${timeString}`;
+  };
+
   //When we want to complete the action of editing our task
   const handleEditTaskSubmit = async () => {
     try {
@@ -142,14 +160,14 @@ const Task = (task: Props) => {
         {/*Task DueAt Section*/}
         {isEdit ? (
           <input
-            type="date"
+            type="datetime-local"
             name="dueAt"
             className="rounded bg-prismPurple outline-grey-400 text-white"
             value={curTask.dueAt}
             onChange={(e) => handleTaskEdit(e)}
           ></input>
         ) : (
-          <p className="text-xs text-gray-400">Due By: {curTask.dueAt}</p>
+          <p className="text-xs text-gray-400">Due By: {formatDueDate(curTask.dueAt)}</p>
         )}
         {/*Task Buttons Section*/}
         <div className="d-flex">

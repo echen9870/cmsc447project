@@ -45,29 +45,50 @@ const AllTasks = ({ username }: Props) => {
     
   }, [username]);
 
-  // Categorize tasks into "Due Today," "Due This Week," and "Upcoming"
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-  const oneWeekFromToday = new Date(today);
-  oneWeekFromToday.setDate(today.getDate() + 7);
+  // Categorize tasks into "Overdue," "Due Today," "Due This Week," and "Upcoming"
+  const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const oneWeekFromNow = new Date(now);
+  oneWeekFromNow.setDate(now.getDate() + 7);
 
   const overdueTasks = tasks.filter(
-    (task) => new Date(task.dueAt) <= yesterday && task.completed == false
+    (task) => new Date(task.dueAt).toLocaleDateString() <= yesterday.toLocaleDateString() && !task.completed
   );
 
   const dueTodayTasks = tasks.filter(
-    (task) => new Date(task.dueAt) > yesterday && new Date(task.dueAt) <= today
+    (task) =>
+      new Date(task.dueAt).toLocaleDateString() > yesterday.toLocaleDateString() &&
+      new Date(task.dueAt).toLocaleDateString() <= now.toLocaleDateString()
   );
 
   const dueThisWeekTasks = tasks.filter(
     (task) =>
-      new Date(task.dueAt) > today && new Date(task.dueAt) <= oneWeekFromToday
+      new Date(task.dueAt).toLocaleDateString() > now.toLocaleDateString() &&
+      new Date(task.dueAt).toLocaleDateString() <= oneWeekFromNow.toLocaleDateString()
   );
 
   const everythingElseTasks = tasks.filter(
-    (task) => new Date(task.dueAt) > oneWeekFromToday
+    (task) => new Date(task.dueAt).toLocaleDateString() > oneWeekFromNow.toLocaleDateString()
   );
+
+  //change the format of how the due date is displayed
+  const formatDueDate = (dueAt: string) => {
+    if (!dueAt) {
+      return ""; // Return nothing if no date is passed
+    }
+    const date = new Date(dueAt);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const timeString = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+
+    return `${month}/${day}/${year}, ${timeString}`;
+  };
 
   return (
     <div className="all-tasks-container">
@@ -88,7 +109,7 @@ const AllTasks = ({ username }: Props) => {
                   <p className={`task-status ${task.completed ? "done" : "undone"}`}>
                     {task.completed ? "Done" : "Undone"}
                   </p>
-                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                  <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
                 </div>
               ))}
               </>
@@ -111,7 +132,7 @@ const AllTasks = ({ username }: Props) => {
                   <p className={`task-status ${task.completed ? "done" : "undone"}`}>
                     {task.completed ? "Done" : "Undone"}
                   </p>
-                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                  <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
                 </div>
               ))}
               </>
@@ -134,7 +155,7 @@ const AllTasks = ({ username }: Props) => {
                   <p className={`task-status ${task.completed ? "done" : "undone"}`}>
                     {task.completed ? "Done" : "Undone"}
                   </p>
-                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                  <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
                 </div>
               ))}
               </>
@@ -157,7 +178,7 @@ const AllTasks = ({ username }: Props) => {
                   <p className={`task-status ${task.completed ? "done" : "undone"}`}>
                     {task.completed ? "Done" : "Undone"}
                   </p>
-                  <p className="task-due-date">Due Date: {task.dueAt}</p>
+                  <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
                 </div>
               ))}
               </>
