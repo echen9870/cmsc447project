@@ -118,6 +118,7 @@ const Calendar = ({ username }: Props) => {
     if (tasksDueOnDay.length > 0) {
       setSelectedTask(tasksDueOnDay);
       setShowModal(true);
+      setSelectedDate(day);
     } else {
       setSelectedDate(day);
     }
