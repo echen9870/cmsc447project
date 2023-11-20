@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Axios from "axios";
 import Task from "./Task";
 import Social from "./Social";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   username: string;
@@ -37,6 +39,12 @@ const TaskGroup = ({ username }: Props) => {
     tasks: [],
     members: [],
   });
+
+  const [isSidebarVisible, setSidebarVisibility] = useState(true);
+
+  const handleToggleSidebar = () => {
+    setSidebarVisibility(!isSidebarVisible);
+  };
 
   useEffect(() => {
     const storedGroupID = sessionStorage.getItem("currentGroupID") || "";
@@ -224,34 +232,49 @@ const TaskGroup = ({ username }: Props) => {
 
   return (
     <div className="flex">
-      {/*Sidebar*/}
-      <aside className="w-1/6 p-2 pr-7 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden">
-        <button
-          className=" w-full border-solid border-2 rounded-md bg-prismGroupInput border-gray-500 py-4 m-2"
-          onClick={handleGroupAdd}
-        >
-          New Group
-        </button>
-        {listOfGroup.map((group) => (
-          <button
-            key={group._id}
-            className={`w-full block border-solid border-2 rounded-md border-gray-500 p-2 m-2 ${
-              //show which group is selected by deep blue color
-              selectedGroup === group._id ? 'bg-blue-900 text-white' : ''
-            }`}
-            onClick={() => {
-              setSelectedGroup(group._id);
-              onGroupChange(group._id);
-            }}
-          >
-            {group.name}
-          </button>
-        ))}
+      {/* Sidebar */}
+      {isSidebarVisible && (
+      <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900 relative">
+        {/* Your sidebar content */}
+        <div className="flex flex-col h-full relative">
+          <div className="flex-1">
+            {/* Rest of your sidebar content */}
+            <button
+              className="w-full bg-prismGroupInput border-2 border-gray-900 rounded-md py-3 my-2 text-center text-lg font-semibold hover:bg-opacity-70 focus:outline-none"
+              onClick={handleGroupAdd}
+            >
+              Create Group
+            </button>
+            {listOfGroup.map((group) => (
+              <button
+                key={group._id}
+                className={`w-full block border-2 rounded-md border-gray-500 p-3 my-2 ${
+                  // Show which group is selected by deep blue color
+                  selectedGroup === group._id ? 'bg-blue-900 text-white' : ''
+                } hover:bg-opacity-70 focus:outline-none`}
+                onClick={() => {
+                  setSelectedGroup(group._id);
+                  onGroupChange(group._id);
+                }}
+              >
+                {group.name}
+              </button>
+            ))}
+          </div>
+          
+        </div>
       </aside>
+      )}
+      <button
+            className="absolute bottom-4 left-4 w-8 h-8 bg-gray-900 text-white p-2 rounded-md hover:bg-opacity-70 focus:outline-none"
+            onClick={handleToggleSidebar}
+          >
+            <FontAwesomeIcon icon={isSidebarVisible ? faChevronLeft : faChevronRight} />
+          </button>
 
-      <main className="flex-1 p-4 h-screen flex flex-col pb-40">
+      <main className="bg-black flex-1 p-4 h-screen flex flex-col pb-40">
         {currentGroupInfo.groupID ? (
-        <>
+          <>
           <TaskHeader
             refreshTask={handleRefreshTask}
             groupID={currentGroupInfo.groupID}
@@ -299,10 +322,10 @@ const TaskGroup = ({ username }: Props) => {
               <p className="upcoming-title">Please Add Task To Start!</p>
             </div>
           )}
-        </>
-      ) : (
-        <h1 className="upcoming-title">Select or create a group to get started</h1>
-      )}
+          </>
+        ) : (
+          <h1 className="upcoming-title">Select or create a group to get started</h1>
+        )}
 
         {/* Border line */}
         <div className="border-t-2 border-gray-400"></div> {/* Border line */}

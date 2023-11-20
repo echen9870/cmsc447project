@@ -140,7 +140,11 @@ const Task = (task: Props) => {
 
   return (
     <>
-      <div className="task flex flex-col">
+    <div className="flex items-center">
+      <button className="font-100 text-3xl" onClick={handleFinish}>
+        {task.completed ? "☑" : "☐"}
+      </button>
+      <div className="task flex flex-col flex-1">
         {/*Task Name Section*/}
         {isEdit ? (
           <input
@@ -168,9 +172,7 @@ const Task = (task: Props) => {
         )}
         {/*Task Buttons Section*/}
         <div className="d-flex">
-          <button className="finishButton" onClick={handleFinish}>
-            {task.completed ? "Unfinish" : "Finish"}
-          </button>
+        
           {isEdit ? (
             <button className="editButton" onClick={handleEditTaskSubmit}>
               Confirm
@@ -239,6 +241,7 @@ const Task = (task: Props) => {
             </div>
           </>
         )}
+      </div>
       </div>
     </>
   );
