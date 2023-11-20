@@ -6,6 +6,7 @@ import Task from "./Task";
 import Social from "./Social";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import backgroundImage from "../pages/bg-image.jpg"
 
 interface Props {
   username: string;
@@ -272,7 +273,13 @@ const TaskGroup = ({ username }: Props) => {
         <FontAwesomeIcon icon={isSidebarVisible ? faChevronLeft : faChevronRight} />
       </button>
 
-      <main className="bg-black flex-1 p-4 h-screen flex flex-col pb-40">
+      <main 
+      className="bg-black flex-1 p-4 h-screen flex flex-col pb-40"
+      style={{
+        background: currentGroupInfo.groupID ? 'black' : `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)),url(${backgroundImage})`,
+        backgroundSize: 'cover',
+      }}
+      >
         {currentGroupInfo.groupID ? (
           <>
           <TaskHeader

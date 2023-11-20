@@ -109,7 +109,7 @@ const LoginPage = ({ onLogin }: Props) => {
     style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${backgroundImage})`, backgroundSize: 'cover' }}>
 
       {/*our app logo*/}
-      <p className="text-4xl font-bold text-white opacity-75 mb-8">TaskMeister☑</p> 
+      <p className="text-6xl font-bold text-white opacity-75 mb-8">TaskMeister☑</p> 
 
       <div className="bg-gray-900 p-8 rounded-lg shadow-lg text-white">
         {/* Password Recovery Form */}
