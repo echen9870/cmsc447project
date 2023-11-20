@@ -80,9 +80,14 @@ const Calendar = ({ username }: Props) => {
         key={day.toString()}
         className={`day ${isToday(day) ? 'today' : ''} ${isSameMonth(day, currentDate) ? '' : 'outside'}`}
         onClick={() => handleDayClick(day)}
-        style={{ backgroundColor: tasksDueOnDay.length > 0 ? 'black' : '' }}
+        style={{ backgroundColor: tasksDueOnDay.length > 0 ? 'black' : '', position: 'relative',}}
       >
         {format(day, 'd')}
+        {tasksDueOnDay.length > 0 && (
+          <span className="task-count">
+            {tasksDueOnDay.length}
+          </span>
+        )}
       </div>
     );
   });
