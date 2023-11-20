@@ -99,15 +99,36 @@ const Task = (task: Props) => {
 
   //When we want to delete our task
   const onTaskDelete = async () => {
-    try {
-      const response = await Axios.delete(
-        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/delete_task/${task._id}`
+    //accounts for accidentally touching of the task delete button
+    if(isEdit){
+      const isConfirmed = window.confirm(
+        "Are you sure you want to delete this task?"
       );
-      console.log(response);
-    } catch (error) {
-      console.error("Error:", error);
+
+      if (isConfirmed) {
+        try {
+          const response = await Axios.delete(
+            `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/delete_task/${task._id}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+        task.onTaskRefresh();
+      }
+    } 
+    //normally just delete, no problems
+    else {
+      try {
+        const response = await Axios.delete(
+          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/delete_task/${task._id}`
+        );
+        console.log(response);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      task.onTaskRefresh();
     }
-    task.onTaskRefresh();
   };
 
   //Assign/Unassign users to the task
@@ -145,18 +166,25 @@ const Task = (task: Props) => {
         {task.completed ? "☑" : "☐"}
       </button>
       <div className="task flex flex-col flex-1">
-        {/*Task Name Section*/}
-        {isEdit ? (
-          <input
-            name="name"
-            type="text"
-            value={curTask.name}
-            className="rounded bg-prismPurple outline-grey-400 text-white"
-            onChange={(e) => handleTaskEdit(e)}
-          ></input>
-        ) : (
-          <b className="flex-1 justify-center">{curTask.name}</b>
-        )}
+          <div className="task-header flex justify-between items-center">
+          {/* Task Name Section */}
+          {isEdit ? (
+            <input
+              name="name"
+              type="text"
+              value={curTask.name}
+              className="rounded bg-prismPurple outline-grey-400 text-white"
+              onChange={(e) => handleTaskEdit(e)}
+            />
+          ) : (
+            <b className="flex-1">{curTask.name}</b>
+          )}
+
+          {/* Delete Button Section */}
+          <button className="hover:bg-black focus:outline-none" onClick={() => onTaskDelete()}>
+            ❌
+          </button>
+        </div>
 
         {/*Task DueAt Section*/}
         {isEdit ? (
@@ -182,9 +210,6 @@ const Task = (task: Props) => {
               Edit
             </button>
           )}
-          <button className="redButton" onClick={() => onTaskDelete()}>
-            Delete
-          </button>
           <button className="greenButton" onClick={handleExpandClick}>
             {isExpanded ? "Collapse" : "Expand"}
           </button>
@@ -242,7 +267,7 @@ const Task = (task: Props) => {
           </>
         )}
       </div>
-      </div>
+    </div>
     </>
   );
 };

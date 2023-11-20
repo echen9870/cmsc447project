@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Axios from "axios"; // Import Axios - for backend interaction
 import PwdRecovery from "./PwdRecovery";
+import backgroundImage from "./bg-image.jpg";
 
 interface Props {
   onLogin: (username: string) => void;
@@ -104,8 +105,13 @@ const LoginPage = ({ onLogin }: Props) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-prismDarkPurple">
-      <div className="bg-prismLightPurple p-8 rounded-lg shadow-lg text-white">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900" 
+    style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${backgroundImage})`, backgroundSize: 'cover' }}>
+
+      {/*our app logo*/}
+      <p className="text-4xl font-bold text-white opacity-75 mb-8">TaskMeister☑</p> 
+
+      <div className="bg-gray-900 p-8 rounded-lg shadow-lg text-white">
         {/* Password Recovery Form */}
         {isPwdRecoveryVisible ? (
           <PwdRecovery onCancel={() => setIsPwdRecoveryVisible(false)} />

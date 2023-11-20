@@ -74,38 +74,44 @@ export const Dashboard = ({ onLogout, username }: Props) => {
       {/* Dropdown menu */}
       {isProfileOpen && (
         <div className="absolute left-1 mt-2 bg-white rounded-md shadow-md text-black-800 p-4">
-          <img
-            src={profileImage}
-            className="w-10 h-10 rounded-full mb-2"
-            alt="User Profile"
-          />
-          <p className="mb-2">Hello {username}!</p>
+          <div className="flex items-center mb-4">
+            <img
+              src={profileImage}
+              className="w-10 h-10 rounded-full mr-3"
+              alt="User Profile"
+            />
+            <div>
+              <p className="text-lg font-semibold mb-1">Hello, {username}!</p>
+              <p className="text-sm text-gray-500">Ready to manage your tasks?</p>
+            </div>
+          </div>
           <button
             onClick={() => handleSelectView("TaskGroup")}
-            className="block px-4 py-2 w-full text-left mb-2"
+            className="block px-4 py-2 w-full text-left mb-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
           >
-            Switch to Task Group
+            Explore Task Groups
           </button>
           <button
             onClick={() => handleSelectView("Calendar")}
-            className="block px-4 py-2 w-full text-left mb-2"
+            className="block px-4 py-2 w-full text-left mb-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
           >
-            Switch to Calendar
+            Check the Calendar
           </button>
           <button
             onClick={() => handleSelectView("AllTasks")}
-            className="block px-4 py-2 w-full text-left mb-2"
+            className="block px-4 py-2 w-full text-left mb-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition duration-300"
           >
-            Switch to All Tasks
+            View All Tasks
           </button>
           <button
             onClick={handleDeleteUser}
-            className="block px-4 py-2 w-full text-left text-red-500"
+            className="block px-4 py-2 w-full text-left text-red-500 hover:font-bold transition duration-300"
           >
-            Delete Account
+            Delete My Account
           </button>
         </div>
       )}
+
   
       {/* Dropdown button and Navigation buttons */}
       <div className="flex justify-between items-center outline p-6 text-white">
@@ -113,7 +119,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
         <div className="" ref={profileRef}>
           <button
             onClick={toggleProfile}
-            className="flex items-center bg-gray-900 rounded-full cursor-pointer p-4"
+            className="flex items-center bg-gray-900 rounded-full cursor-pointer p-4 hover:bg-black focus:outline-none"
           >
             <img
               src={profileImage}
@@ -125,34 +131,39 @@ export const Dashboard = ({ onLogout, username }: Props) => {
   
           {/* Line underneath dropdown button */}
           {isProfileOpen && (
-            <div className="absolute left-0 bottom-0 w-full h-1 bg-gray-400" />
+            <div className="absolute left-0 bottom-0 w-full h-1 bg-gray-900" />
           )}
         </div>
+
+
+        {/*our app logo*/}
+        <p className="text-4xl font-bold text-white opacity-75">TaskMeister☑</p>
+
   
         {/* Navigation buttons */}
         <div className="flex space-x-1">
           {/* Rest of your buttons */}
           <button
             onClick={() => handleSelectView("TaskGroup")}
-            className={`bg-blue-500 text-white px-4 py-2 rounded-md ${selectedView === "TaskGroup" ? "bg-opacity-100" : "bg-opacity-50"}`}
+            className={`bg-blue-500 hover:bg-blue-500 focus:outline-none text-white px-4 py-2 rounded-md ${selectedView === "TaskGroup" ? "bg-opacity-100" : "bg-opacity-50"}`}
           >
             Task Group
           </button>
           <button
             onClick={() => handleSelectView("Calendar")}
-            className={`bg-blue-500 text-white px-4 py-2 rounded-md ${selectedView === "Calendar" ? "bg-opacity-100" : "bg-opacity-50"}`}
+            className={`bg-blue-500 hover:bg-blue-500 focus:outline-none text-white px-4 py-2 rounded-md ${selectedView === "Calendar" ? "bg-opacity-100" : "bg-opacity-50"}`}
           >
             Calendar
           </button>
           <button
             onClick={() => handleSelectView("AllTasks")}
-            className={`bg-blue-500 text-white px-4 py-2 rounded-md ${selectedView === "AllTasks" ? "bg-opacity-100" : "bg-opacity-50"}`}
+            className={`bg-blue-500 hover:bg-blue-500 focus:outline-none text-white px-4 py-2 rounded-md ${selectedView === "AllTasks" ? "bg-opacity-100" : "bg-opacity-50"}`}
           >
             All Tasks
           </button>
           <button
             onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded-md"
+            className="bg-red-500 hover:bg-red-900 focus:outline-none text-white px-4 py-2 rounded-md"
           >
             Logout
           </button>

@@ -84,8 +84,9 @@ const Calendar = ({ username }: Props) => {
       >
         {format(day, 'd')}
         {tasksDueOnDay.length > 0 && (
-          <span className="task-count">
-            {tasksDueOnDay.length}
+          //get number of incomplete tasks
+          <span className="task-count" style={{ backgroundColor: tasksDueOnDay.filter(task => !task.completed).length == 0 ? 'black' : ''}}>
+            {tasksDueOnDay.filter(task => !task.completed).length} 
           </span>
         )}
       </div>

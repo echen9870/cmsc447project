@@ -234,9 +234,9 @@ const TaskGroup = ({ username }: Props) => {
     <div className="flex">
       {/* Sidebar */}
       {isSidebarVisible && (
-      <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900 relative">
+      <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900">
         {/* Your sidebar content */}
-        <div className="flex flex-col h-full relative">
+        <div className="flex flex-col h-full">
           <div className="flex-1">
             {/* Rest of your sidebar content */}
             <button
@@ -248,10 +248,10 @@ const TaskGroup = ({ username }: Props) => {
             {listOfGroup.map((group) => (
               <button
                 key={group._id}
-                className={`w-full block border-2 rounded-md border-gray-500 p-3 my-2 ${
+                className={`w-full block border-2 rounded-md border-gray-500 p-3 my-2 hover:bg-blue-900 focus:outline-none ${
                   // Show which group is selected by deep blue color
                   selectedGroup === group._id ? 'bg-blue-900 text-white' : ''
-                } hover:bg-opacity-70 focus:outline-none`}
+                }`}
                 onClick={() => {
                   setSelectedGroup(group._id);
                   onGroupChange(group._id);
@@ -266,11 +266,11 @@ const TaskGroup = ({ username }: Props) => {
       </aside>
       )}
       <button
-            className="absolute bottom-4 left-4 w-8 h-8 bg-gray-900 text-white p-2 rounded-md hover:bg-opacity-70 focus:outline-none"
-            onClick={handleToggleSidebar}
-          >
-            <FontAwesomeIcon icon={isSidebarVisible ? faChevronLeft : faChevronRight} />
-          </button>
+        className="absolute bottom-4 left-4 w-8 h-8 bg-gray-900 text-white p-2 rounded-md hover:bg-opacity-70 focus:outline-none"
+        onClick={handleToggleSidebar}
+      >
+        <FontAwesomeIcon icon={isSidebarVisible ? faChevronLeft : faChevronRight} />
+      </button>
 
       <main className="bg-black flex-1 p-4 h-screen flex flex-col pb-40">
         {currentGroupInfo.groupID ? (
@@ -329,9 +329,11 @@ const TaskGroup = ({ username }: Props) => {
 
         {/* Border line */}
         <div className="border-t-2 border-gray-400"></div> {/* Border line */}
+        {/*Socail Content*/}
         <div className=" overflow-y-auto ">
           {currentGroupInfo.groupID && (
             <Social
+              username={username}
               isOwner={currentGroupInfo.isOwner}
               users={currentGroupInfo.members}
               onMemberAdd={handleAddMember}
