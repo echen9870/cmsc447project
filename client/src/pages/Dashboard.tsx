@@ -50,6 +50,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
   const handleLogout = () => {
     sessionStorage.removeItem("currentGroupID");
     sessionStorage.removeItem("selectedView");
+    sessionStorage.removeItem('isSidebarMembers');
     onLogout("");
   };
 

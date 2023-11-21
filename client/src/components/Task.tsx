@@ -26,8 +26,14 @@ const Task = (task: Props) => {
   //When we want to expand/edit our task
   const handleExpandClick = () => setIsExpanded(!isExpanded);
   const handleEditTask = () => setIsEdit(!isEdit);
-  
 
+  //use for assign
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const handleAssignShow = () => {
+    setIsDropdownVisible(!isDropdownVisible);
+    setSelectedAssignMember("");
+  }
+  
   //Used to make sure our description text box automatically is the size needed to display all the information in the text box
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -135,6 +141,7 @@ const Task = (task: Props) => {
   const handleAssignUserToTask = async () => {
     console.log(task._id);
     console.log(selectedAssignMember);
+    handleAssignShow();
     if (!task.assignedUsers.includes(selectedAssignMember)) {
       // Assigns the user to the task
       try {
@@ -157,6 +164,7 @@ const Task = (task: Props) => {
       }
     }
     task.onTaskRefresh();
+    setSelectedAssignMember("");
   };
 
   return (
@@ -173,11 +181,13 @@ const Task = (task: Props) => {
               name="name"
               type="text"
               value={curTask.name}
-              className="rounded bg-prismPurple outline-grey-400 text-white"
+              className="rounded bg-prismPurple outline-grey-400 text-white flex-grow"
               onChange={(e) => handleTaskEdit(e)}
             />
           ) : (
-            <b className="flex-1">{curTask.name}</b>
+            <div onClick={handleEditTask}>
+              <b className="cursor-pointer">{curTask.name}</b>
+            </div>
           )}
 
           {/* Delete Button Section */}
@@ -196,13 +206,22 @@ const Task = (task: Props) => {
             onChange={(e) => handleTaskEdit(e)}
           ></input>
         ) : (
-          <p className="text-xs text-gray-400">Due By: {formatDueDate(curTask.dueAt)}</p>
+          <div onClick={handleEditTask}>
+            <p className="text-xs text-gray-400">Due By: {formatDueDate(curTask.dueAt)}</p>
+          </div>
         )}
+        <div className="flex outline-gray-400 outline rounded-md ">
+          <p className="px-2 border-r-2 text-xs text-gray-400">Assigned To:</p>
+          {task.assignedUsers.map((member) => (
+            <p className="px-2 border-x-2 text-xs text-blue-400">{member}</p>
+          ))}
+          <p className="px-2 border-l-2"></p>
+        </div>
         {/*Task Buttons Section*/}
         <div className="d-flex">
         
           {isEdit ? (
-            <button className="editButton" onClick={handleEditTaskSubmit}>
+            <button className="" onClick={handleEditTaskSubmit}>
               Confirm
             </button>
           ) : (
@@ -210,47 +229,39 @@ const Task = (task: Props) => {
               Edit
             </button>
           )}
+          {/*Task Assigned Section*/}
+          <button
+            className="finishButton"
+            onClick={handleAssignUserToTask}
+          >
+            {(!task.assignedUsers.includes(selectedAssignMember)) ? "Assign" : "Unassign"}
+          </button>
+          {isDropdownVisible && (
+            <select
+              className="text-white rounded-lg bg-prismPurple "
+              id="dropdown"
+              value={selectedAssignMember}
+              onChange={(e) => {
+                console.log(e.target.value);
+                setSelectedAssignMember(e.target.value);
+              }}
+            >
+              <option value={""} className=""></option>
+              {task.members.map((member, index) => (
+                <option key={index} value={member} className="text-white">
+                  {member}
+                </option>
+              ))}
+            </select>
+          )}
           <button className="greenButton" onClick={handleExpandClick}>
-            {isExpanded ? "Collapse" : "Expand"}
+            {isExpanded ? "Confirm" : "Add Description"}
           </button>
         </div>
         {/*Task Expanded Section*/}
         {isExpanded && (
           <>
             <div className="expandContent">
-              {/*Task Assigned Section*/}
-              <div className="d-flex ">
-                <button
-                  className="purpleButton bg-purple-500 "
-                  onClick={handleAssignUserToTask}
-                >
-                  Unassign/Assign Members
-                </button>
-                <select
-                  className="text-white rounded-lg bg-prismPurple "
-                  id="dropdown"
-                  value={selectedAssignMember}
-                  onChange={(e) => {
-                    console.log(e.target.value);
-                    setSelectedAssignMember(e.target.value);
-                  }}
-                >
-                  <option value={""} className=""></option>
-                  {task.members.map((member, index) => (
-                    <option key={index} value={member} className="text-white">
-                      {member}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex outline-gray-400 outline rounded-md ">
-                <p className="px-2 border-r-2">Assigned To:</p>
-                {task.assignedUsers.map((member) => (
-                  <p className="px-2 border-x-2">{member}</p>
-                ))}
-                <p className="px-2 border-l-2"></p>
-              </div>
-
               {/*Task Notes Section*/}
               <textarea
                 ref={textAreaRef}

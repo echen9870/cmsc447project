@@ -47,6 +47,25 @@ const TaskGroup = ({ username }: Props) => {
     setSidebarVisibility(!isSidebarVisible);
   };
 
+  const [isSidebarMembers, setSidebarMembers] = useState<boolean>(
+    sessionStorage.getItem('isSidebarMembers') === 'true' || true
+  );
+
+  const handleToggleSidebarMembers = () => {
+    setSidebarMembers((prevValue: boolean) => {
+      const newValue = !prevValue;
+      sessionStorage.setItem('isSidebarMembers', String(newValue));
+      return newValue;
+    });
+  };
+
+  useEffect(() => {
+    const storedValue = sessionStorage.getItem('isSidebarMembers');
+    if (storedValue !== null) {
+      setSidebarMembers((prevValue: boolean) => prevValue !== (storedValue === 'true'));
+    }
+  }, []);
+
   useEffect(() => {
     const storedGroupID = sessionStorage.getItem("currentGroupID") || "";
     if (storedGroupID) {
@@ -141,20 +160,26 @@ const TaskGroup = ({ username }: Props) => {
 
   //Deleting a group
   const handleGroupDelete = async (groupID: string) => {
-    try {
-      const response = await Axios.delete(
-        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/delete_group/${groupID}`
-      );
-      console.log(response);
-      await getListOfGroupIDs();
-      setCurrentGroupInfo({
-        groupID: "",
-        isOwner: false,
-        tasks: [],
-        members: [],
-      });
-    } catch (error) {
-      console.error("Error:", error);
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this group?"
+    );
+
+    if (isConfirmed) {
+      try {
+        const response = await Axios.delete(
+          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/delete_group/${groupID}`
+        );
+        console.log(response);
+        await getListOfGroupIDs();
+        setCurrentGroupInfo({
+          groupID: "",
+          isOwner: false,
+          tasks: [],
+          members: [],
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
@@ -266,6 +291,8 @@ const TaskGroup = ({ username }: Props) => {
         </div>
       </aside>
       )}
+
+      {/* Toggle Sidebar Button */}
       <button
         className="absolute bottom-4 left-4 w-8 h-8 bg-gray-900 text-white p-2 rounded-md hover:bg-opacity-70 focus:outline-none"
         onClick={handleToggleSidebar}
@@ -273,8 +300,8 @@ const TaskGroup = ({ username }: Props) => {
         <FontAwesomeIcon icon={isSidebarVisible ? faChevronLeft : faChevronRight} />
       </button>
 
-      <main 
-      className="bg-black flex-1 p-4 h-screen flex flex-col pb-40"
+      {/* Main Content */}
+      <main className="bg-black flex-1 p-4 h-screen flex flex-col pb-40"
       style={{
         background: currentGroupInfo.groupID ? 'black' : `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)),url(${backgroundImage})`,
         backgroundSize: 'cover',
@@ -291,7 +318,7 @@ const TaskGroup = ({ username }: Props) => {
             onTaskAdd={() => handleOnTaskAdd()}
           ></TaskHeader>
           {currentGroupInfo.tasks && (currentGroupInfo.tasks as Task[]).length > 0 ? (
-            <div className="h-4/5 overflow-y-auto">
+            <div className="h-5/5 overflow-y-auto">
               <div>
                 <h1>Uncompleted Task(s):</h1>
                 {currentGroupInfo.tasks &&
@@ -325,7 +352,7 @@ const TaskGroup = ({ username }: Props) => {
               </div>
             </div>
           ) : (
-            <div className="h-4/5 overflow-y-auto">
+            <div className="h-5/5 overflow-y-auto">
               <p className="upcoming-title">Please Add Task To Start!</p>
             </div>
           )}
@@ -333,22 +360,30 @@ const TaskGroup = ({ username }: Props) => {
         ) : (
           <h1 className="upcoming-title">Select or create a group to get started</h1>
         )}
-
-        {/* Border line */}
-        <div className="border-t-2 border-gray-400"></div> {/* Border line */}
-        {/*Socail Content*/}
-        <div className=" overflow-y-auto ">
-          {currentGroupInfo.groupID && (
-            <Social
-              username={username}
-              isOwner={currentGroupInfo.isOwner}
-              users={currentGroupInfo.members}
-              onMemberAdd={handleAddMember}
-              onMemberDelete={handleDeleteMember}
-            ></Social>
-          )}
-        </div>
       </main>
+
+      {/* Sidebar for Members */}
+      {isSidebarMembers && (
+        <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900">
+          <div className=" overflow-y-auto ">
+            {currentGroupInfo.groupID && (
+              <Social
+                username={username}
+                isOwner={currentGroupInfo.isOwner}
+                users={currentGroupInfo.members}
+                onMemberAdd={handleAddMember}
+                onMemberDelete={handleDeleteMember}
+              ></Social>
+            )}
+          </div>
+        </aside>
+      )}
+      <button
+        className="toggle-sidebar-button absolute bottom-4 right-4 w-8 h-8 bg-gray-900 text-white p-2 rounded-md hover:bg-opacity-70 focus:outline-none"
+        onClick={handleToggleSidebarMembers}
+      >
+        <FontAwesomeIcon icon={isSidebarMembers ? faChevronRight : faChevronLeft} />
+      </button>
     </div>
   );
 };

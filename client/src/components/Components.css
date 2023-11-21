@@ -12,7 +12,7 @@
   @apply bg-red-500 m-1 py-1 px-1 rounded;
 }
 .assignButton {
-  @apply bg-yellow-500 m-1 py-1 px-1 rounded;
+  @apply bg-yellow-600 m-1 py-1 px-1 rounded;
 }
 .greenButton {
   @apply bg-green-500 m-1 py-1 px-1 rounded;

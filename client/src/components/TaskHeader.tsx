@@ -21,16 +21,22 @@ const Taskheader = ({
   const [changeNameView, setChangeNameView] = useState(false);
   const [newName, setNewName] = useState("");
   const onTaskDeleteAll = async () => {
-    try {
-      const response = await axios.delete(
-        `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/delete_all_tasks/${groupID}`
-      );
-      console.log(response); 
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle errors or display error messages to the user
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete all tasks?"
+    );
+
+    if (isConfirmed) {
+      try {
+        const response = await axios.delete(
+          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/delete_all_tasks/${groupID}`
+        );
+        console.log(response); 
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle errors or display error messages to the user
+      }
+      refreshTask();
     }
-    refreshTask();
   };
 
   const handleAllTaskStatusChange = async (isFinish: boolean) => {

@@ -16,46 +16,50 @@ const Social = ({ users, onMemberAdd, onMemberDelete, isOwner, username }: Props
   };
   const handleAddMember = () => {
     onMemberAdd(newMember);
+    setNewMember("");
   };
 
   return (
-    <div className="flex-col text-white flex bg-gray-800 border-gray-400 border-2 rounded-lg m-2 p-2">
-      <p>Member(s):</p>
-      <div className="flex flex-row">
-      {users.map((user, index) => (
+    <div className="flex-col text-white flex bg-gray-800 border-gray-400  rounded-lg">
+      <p className="text-lg font-semibold mb-2 p-2">Members:</p>
+      <div className="flex flex-col">
+        {users.map((user, index) => (
           <div
             key={index}
-            className="flex border-gray-400 border-2 justify-center items-center rounded-lg w-1/3"
+            className="flex items-center justify-between border-gray-400 border-2 rounded-md p-2 mb-2 bg-gray-700"
           >
             <p className="text-sm flex-grow">{user}</p>
             {isOwner && user !== username && (
               <button
-                className="redButton ml-auto"
+                className="text-red-500 hover:text-red-700 focus:outline-none"
                 onClick={() => handleDeleteMember(user)}
               >
-                Remove
+                x
               </button>
             )}
           </div>
-      ))}
+        ))}
       </div>
+    
       {isOwner && (
-        <div className="flex border-gray-400 border-2 justify-center items-center rounded-lg my-2 ">
+        <div className="flex flex-col my-2 p-2 bg-gray-800 rounded-md">
           <input
             type="text"
             value={newMember}
             onChange={(e) => setNewMember(e.target.value)}
             placeholder="Add Member"
-            className="bg-gray-800 text-center flex-grow"
-          ></input>
-          {
-            <button className="greenButton ml-auto" onClick={handleAddMember}>
-              Add
-            </button>
-          }
+            className="bg-gray-700 text-white p-2 rounded-md mb-2 focus:outline-none text-sm"
+          />
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white p-2 rounded-md focus:outline-none"
+            onClick={handleAddMember}
+          >
+            Add
+          </button>
         </div>
       )}
     </div>
+  
   );
 };
 
