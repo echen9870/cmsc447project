@@ -170,6 +170,7 @@ const Task = (task: Props) => {
   return (
     <>
     <div className="flex items-center">
+      {/* Task Complete or Not Section */}
       <button className="font-100 text-3xl" onClick={handleFinish}>
         {task.completed ? "☑" : "☐"}
       </button>
@@ -210,14 +211,14 @@ const Task = (task: Props) => {
             <p className="text-xs text-gray-400">Due By: {formatDueDate(curTask.dueAt)}</p>
           </div>
         )}
-        <div className="flex outline-gray-400 outline rounded-md ">
+        <div className="flex border border-solid border-gray-400 border-1 rounded-md">
           <p className="px-2 border-r-2 text-xs text-gray-400">Assigned To:</p>
           {task.assignedUsers.map((member) => (
             <p className="px-2 border-x-2 text-xs text-blue-400">{member}</p>
           ))}
           <p className="px-2 border-l-2"></p>
         </div>
-        {/*Task Buttons Section*/}
+        {/*Task Edit Section*/}
         <div className="d-flex">
         
           {isEdit ? (
@@ -254,15 +255,15 @@ const Task = (task: Props) => {
               ))}
             </select>
           )}
+          {/*Task Description Section*/}
           <button className="greenButton" onClick={handleExpandClick}>
             {isExpanded ? "Confirm" : "Add Description"}
           </button>
         </div>
-        {/*Task Expanded Section*/}
+        {/*Task Notes Section*/}
         {isExpanded && (
           <>
             <div className="expandContent">
-              {/*Task Notes Section*/}
               <textarea
                 ref={textAreaRef}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {

@@ -362,8 +362,8 @@ const TaskGroup = ({ username }: Props) => {
         )}
       </main>
 
-      {/* Sidebar for Members */}
-      {isSidebarMembers && (
+      {/* Sidebar for Members, only when a group is selected */}
+      {isSidebarMembers && currentGroupInfo.groupID && (
         <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900">
           <div className=" overflow-y-auto ">
             {currentGroupInfo.groupID && (
@@ -378,12 +378,14 @@ const TaskGroup = ({ username }: Props) => {
           </div>
         </aside>
       )}
-      <button
-        className="toggle-sidebar-button absolute bottom-4 right-4 w-8 h-8 bg-gray-900 text-white p-2 rounded-md hover:bg-opacity-70 focus:outline-none"
-        onClick={handleToggleSidebarMembers}
-      >
-        <FontAwesomeIcon icon={isSidebarMembers ? faChevronRight : faChevronLeft} />
-      </button>
+      {currentGroupInfo.groupID &&(
+        <button
+          className="toggle-sidebar-button absolute bottom-4 right-4 w-8 h-8 bg-gray-900 text-white p-2 rounded-md hover:bg-opacity-70 focus:outline-none"
+          onClick={handleToggleSidebarMembers}
+        >
+          <FontAwesomeIcon icon={isSidebarMembers ? faChevronRight : faChevronLeft} />
+        </button>
+      )}
     </div>
   );
 };

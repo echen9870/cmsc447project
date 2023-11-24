@@ -47,29 +47,33 @@ const AllTasks = ({ username }: Props) => {
 
   // Categorize tasks into "Overdue," "Due Today," "Due This Week," and "Upcoming"
   const now = new Date();
+  now.setHours(23, 59, 59, 599);
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
   const oneWeekFromNow = new Date(now);
-  oneWeekFromNow.setDate(now.getDate() + 7);
+  oneWeekFromNow.setDate(now.getDate() + 6);
+  console.log(now)
+  console.log(yesterday)
+  console.log(oneWeekFromNow)
 
   const overdueTasks = tasks.filter(
-    (task) => new Date(task.dueAt).toLocaleDateString() <= yesterday.toLocaleDateString() && !task.completed
+    (task) => new Date(task.dueAt) <= yesterday && !task.completed
   );
 
   const dueTodayTasks = tasks.filter(
     (task) =>
-      new Date(task.dueAt).toLocaleDateString() > yesterday.toLocaleDateString() &&
-      new Date(task.dueAt).toLocaleDateString() <= now.toLocaleDateString()
+      new Date(task.dueAt) > yesterday &&
+      new Date(task.dueAt) <= now
   );
 
   const dueThisWeekTasks = tasks.filter(
     (task) =>
-      new Date(task.dueAt).toLocaleDateString() > now.toLocaleDateString() &&
-      new Date(task.dueAt).toLocaleDateString() <= oneWeekFromNow.toLocaleDateString()
+      new Date(task.dueAt) > now &&
+      new Date(task.dueAt) <= oneWeekFromNow
   );
 
   const everythingElseTasks = tasks.filter(
-    (task) => new Date(task.dueAt).toLocaleDateString() > oneWeekFromNow.toLocaleDateString()
+    (task) => new Date(task.dueAt) > oneWeekFromNow
   );
 
   //change the format of how the due date is displayed
