@@ -15,12 +15,26 @@ export const Dashboard = ({ onLogout, username }: Props) => {
   const storedView = sessionStorage.getItem("selectedView");
   const [selectedView, setSelectedView] = useState<string>(storedView || "TaskGroup");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [email, setEmail] = useState(null);
 
   const toggleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   };
 
   const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Use Axios to make the API call
+    Axios.get(`https://todolist-taskmeister-78653fbaf01e.herokuapp.com/auth/get_email/${username}`)
+      .then(response => {
+        // Update the state with the data from the API
+        setEmail(response.data.email);
+      })
+      .catch(error => {
+        // Handle errors
+        console.error("Error fetching data:", error);
+      });
+  }, [username]);
 
   useEffect(() => {
     sessionStorage.setItem("selectedView", selectedView);
@@ -85,7 +99,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
             />
             <div>
               <p className="text-lg font-semibold mb-1">Hello, {username}!</p>
-              <p className="text-sm text-gray-500">Ready to manage your tasks?</p>
+              <p className="text-sm text-gray-500">{email}</p>
             </div>
           </div>
           <button
@@ -105,6 +119,12 @@ export const Dashboard = ({ onLogout, username }: Props) => {
             className="block px-4 py-2 w-full text-left mb-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition duration-300"
           >
             View All Tasks
+          </button>
+          <button
+            onClick={handleLogout}
+            className="block px-4 py-2 w-full text-left mb-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+          >
+            🔒 Logout
           </button>
           <button
             onClick={handleDeleteUser}
@@ -163,12 +183,6 @@ export const Dashboard = ({ onLogout, username }: Props) => {
             className={`bg-blue-500 hover:bg-blue-500 focus:outline-none text-white px-4 py-2 rounded-md ${selectedView === "AllTasks" ? "bg-opacity-100" : "bg-opacity-50"}`}
           >
             All Tasks
-          </button>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-900 focus:outline-none text-white px-4 py-2 rounded-md"
-          >
-            Logout
           </button>
         </div>
       </div>
