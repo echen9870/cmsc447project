@@ -139,32 +139,34 @@ const Task = (task: Props) => {
 
   //Assign/Unassign users to the task
   const handleAssignUserToTask = async () => {
-    console.log(task._id);
-    console.log(selectedAssignMember);
-    handleAssignShow();
-    if (!task.assignedUsers.includes(selectedAssignMember)) {
-      // Assigns the user to the task
-      try {
-        const response = await Axios.put(
-          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/add_member_to_task/${task._id}/${selectedAssignMember}`
-        );
-        console.log(response);
-      } catch (error) {
-        console.error("Error:", error);
+    if(!isEdit){
+      console.log(task._id);
+      console.log(selectedAssignMember);
+      handleAssignShow();
+      if (!task.assignedUsers.includes(selectedAssignMember)) {
+        // Assigns the user to the task
+        try {
+          const response = await Axios.put(
+            `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/add_member_to_task/${task._id}/${selectedAssignMember}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      } else {
+        //Unassign the user from the task
+        try {
+          const response = await Axios.put(
+            `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/remove_member_to_task/${task._id}/${selectedAssignMember}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
-    } else {
-      //Unassign the user from the task
-      try {
-        const response = await Axios.put(
-          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/remove_member_to_task/${task._id}/${selectedAssignMember}`
-        );
-        console.log(response);
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      task.onTaskRefresh();
+      setSelectedAssignMember("");
     }
-    task.onTaskRefresh();
-    setSelectedAssignMember("");
   };
 
   return (
