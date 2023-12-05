@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Axios from "axios";
 import "./AllTasks.css"; // CSS file
+import nextSunday from "date-fns/nextSunday";
 
 interface Props {
   username: string;
@@ -49,8 +50,8 @@ const AllTasks = ({ username }: Props) => {
   const now = new Date();
   const today = new Date(now);
   today.setHours(23, 59, 59, 599);
-  const oneWeekFromNow = new Date(now);
-  oneWeekFromNow.setDate(now.getDate() + 6);
+  today.setDate(now.getDate());
+  const oneWeekFromNow = nextSunday(today);
   console.log(now);
   console.log(today);
   console.log(oneWeekFromNow);
@@ -67,7 +68,7 @@ const AllTasks = ({ username }: Props) => {
 
   const dueThisWeekTasks = tasks.filter(
     (task) =>
-      new Date(task.dueAt) > now &&
+      new Date(task.dueAt) > today &&
       new Date(task.dueAt) <= oneWeekFromNow
   );
 
