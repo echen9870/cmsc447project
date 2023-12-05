@@ -51,9 +51,9 @@ const AllTasks = ({ username }: Props) => {
   today.setHours(23, 59, 59, 599);
   const oneWeekFromNow = new Date(now);
   oneWeekFromNow.setDate(now.getDate() + 6);
-  console.log(now)
-  console.log(today)
-  console.log(oneWeekFromNow)
+  console.log(now);
+  console.log(today);
+  console.log(oneWeekFromNow);
 
   const overdueTasks = tasks.filter(
     (task) => new Date(task.dueAt) <= now && !task.completed
