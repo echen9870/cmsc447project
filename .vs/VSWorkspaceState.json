@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\client",
+    "\\client\\src",
+    "\\client\\src\\pages",
+    "\\server",
+    "\\server\\controllers",
+    "\\server\\controllers\\api",
+    "\\server\\models",
+    "\\server\\routes",
+    "\\server\\routes\\api",
+    "\\server\\test-server-setup"
+  ],
+  "SelectedNode": "\\client\\src\\pages\\PwdRecovery.tsx",
+  "PreviewInSolutionExplorer": false
+}
