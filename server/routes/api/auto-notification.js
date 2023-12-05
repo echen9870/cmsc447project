@@ -22,25 +22,25 @@ const sendTaskNotifications = async () => {
 
     // Iterate over each user and send notifications
     for (const user of users) {
-      // Get overdue tasks or tasks due today for the specified user
+      // Get overdue tasks for the specified user
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
-
-      // MongoDB query for finding overdue tasks
       const overdueTasks = await Task.find({
         assignedUsers: user.username,
         completed: false,
-        dueAt: { $lte: yesterday.toISOString() },
+        dueAt: { $lt: today.toISOString() },
       });
-      console.log("Overdue tasks (MongoDB):", overdueTasks);
-      console.log("length: ", overdueTasks.length);
-      
+      console.log(today)
+
+      if (user.username === 'icram') {
+        console.log("Overdue tasks (MongoDB):", overdueTasks);
+        console.log("Number of overdue tasks: ", overdueTasks.length);
+      }
+
+      // Get tasks due today for the specified user
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
-      
+
       const dueTodayTasks = await Task.find({
         assignedUsers: user.username,
         completed: false,
@@ -49,9 +49,11 @@ const sendTaskNotifications = async () => {
           $lt: tomorrow.toISOString(),
         },
       });
-      console.log("Due today tasks:", dueTodayTasks);    
-      console.log("length: ", dueTodayTasks.length);  
 
+      if (user.username === 'icram') {
+        console.log("Due today tasks:", dueTodayTasks);
+        console.log("Number of tasks due today: ", dueTodayTasks.length);
+      }
 
       // Combine overdue and due today tasks
       const tasksToNotify = [...overdueTasks, ...dueTodayTasks];
@@ -84,7 +86,7 @@ const sendTaskNotifications = async () => {
         };
 
         // Send email
-        await transporter.sendMail(mailOptions);
+        //await transporter.sendMail(mailOptions);
       }
     }
   } catch (error) {
