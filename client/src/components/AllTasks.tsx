@@ -47,23 +47,22 @@ const AllTasks = ({ username }: Props) => {
 
   // Categorize tasks into "Overdue," "Due Today," "Due This Week," and "Upcoming"
   const now = new Date();
-  now.setHours(23, 59, 59, 599);
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
+  const today = new Date(now);
+  today.setHours(23, 59, 59, 599);
   const oneWeekFromNow = new Date(now);
   oneWeekFromNow.setDate(now.getDate() + 6);
   console.log(now)
-  console.log(yesterday)
+  console.log(today)
   console.log(oneWeekFromNow)
 
   const overdueTasks = tasks.filter(
-    (task) => new Date(task.dueAt) <= yesterday && !task.completed
+    (task) => new Date(task.dueAt) <= now && !task.completed
   );
 
   const dueTodayTasks = tasks.filter(
     (task) =>
-      new Date(task.dueAt) > yesterday &&
-      new Date(task.dueAt) <= now
+      new Date(task.dueAt) > now &&
+      new Date(task.dueAt) <= today
   );
 
   const dueThisWeekTasks = tasks.filter(
