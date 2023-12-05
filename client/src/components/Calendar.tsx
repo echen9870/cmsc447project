@@ -155,7 +155,7 @@ const Calendar = ({ username }: Props) => {
   };
 
   return (
-    <div className="calendar">
+    <div className="h-screen overflow-y-auto overflow-x-hidden pb-40">
       <div className="header">
         <h2>{format(currentDate, 'MMMM yyyy')}</h2>
         <button className="mr-0.5" onClick={prevMonth}>←</button>
@@ -220,7 +220,7 @@ const Calendar = ({ username }: Props) => {
                 <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
               </div>
             ))}
-            <button className="bg-gray-900" onClick={() => setShowModal(false)}>Close</button>
+            <button className="justify-right bg-gray-700 hover:bg-black" onClick={() => setShowModal(false)}>Close</button>
           </div>
         )}
       </div>

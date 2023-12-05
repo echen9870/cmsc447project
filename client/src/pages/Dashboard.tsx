@@ -87,7 +87,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
 
   return (
     <div className="flex flex-col bg-prismDarkPurple h-screen relative"
-    style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${backgroundImage})`, backgroundSize: 'cover' }}>
+    style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 1)), url(${backgroundImage})`, backgroundSize: 'cover' }}>
       {/* Dropdown menu */}
       {isProfileOpen && (
         <div className="absolute left-1 mt-2 bg-white rounded-md shadow-md text-black-800 p-4">
@@ -160,7 +160,7 @@ export const Dashboard = ({ onLogout, username }: Props) => {
 
 
         {/*our app logo*/}
-        <p className="text-4xl font-bold text-white opacity-75">TaskMeister☑</p>
+        <p className="text-3xl font-bold text-white opacity-70">TaskMeister☑</p>
 
   
         {/* Navigation buttons */}

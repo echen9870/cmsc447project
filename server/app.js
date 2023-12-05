@@ -23,7 +23,6 @@ getConnection();
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
-sendTaskNotifications()
 
 // Schedule the cron job to run every day at 8:00 AM in a specific time zone :'America/New_York'
 cron.schedule('0 8 * * *', async () => {

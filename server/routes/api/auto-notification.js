@@ -23,40 +23,28 @@ const sendTaskNotifications = async () => {
     // Iterate over each user and send notifications
     for (const user of users) {
       // Get overdue tasks for the specified user
-      const today = new Date();
-      const overdueTasks = await Task.find({
-        assignedUsers: user.username,
-        completed: false,
-        dueAt: { $lt: today.toISOString() },
-      });
-      console.log(today)
-
-      if (user.username === 'icram') {
-        console.log("Overdue tasks (MongoDB):", overdueTasks);
-        console.log("Number of overdue tasks: ", overdueTasks.length);
-      }
-
+      var today = new Date();
       // Get tasks due today for the specified user
       const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+      tomorrow.setDate(today.getDate());
+      tomorrow.setHours(18, 59, 59, 999);
+      console.log(tomorrow);
 
       const dueTodayTasks = await Task.find({
         assignedUsers: user.username,
         completed: false,
         dueAt: {
-          $gte: today.toISOString(),
           $lt: tomorrow.toISOString(),
         },
       });
 
       if (user.username === 'icram') {
         console.log("Due today tasks:", dueTodayTasks);
-        console.log("Number of tasks due today: ", dueTodayTasks.length);
+        console.log("Number of tasks due today or overdue: ", dueTodayTasks.length);
       }
 
       // Combine overdue and due today tasks
-      const tasksToNotify = [...overdueTasks, ...dueTodayTasks];
+      const tasksToNotify = [...dueTodayTasks];
       
       // Sort tasks by due date in ascending order
       tasksToNotify.sort((a, b) => new Date(a.dueAt) - new Date(b.dueAt));
@@ -86,7 +74,7 @@ const sendTaskNotifications = async () => {
         };
 
         // Send email
-        //await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
       }
     }
   } catch (error) {

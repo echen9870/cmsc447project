@@ -313,7 +313,7 @@ const TaskGroup = ({ username }: Props) => {
       {/* Main Content */}
       <main className="bg-black rounded-md flex-1 p-4 h-screen flex flex-col pb-40"
       style={{
-        background: currentGroupInfo.groupID ? 'black' : `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)),url(${backgroundImage})`,
+        background: currentGroupInfo.groupID ? 'black' : `linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)),url(${backgroundImage})`,
         backgroundSize: 'cover',
       }}
       >

@@ -95,8 +95,8 @@ const AllTasks = ({ username }: Props) => {
   };
 
   return (
-    <div className="all-tasks-container">
-      <h1 className="page-title">{username}'s Tasks Stream</h1>
+    <div className="h-screen overflow-y-auto overflow-x-hidden pb-40">
+      <h1 className="page-title">{username}'s Tasks Stream:</h1>
       <div className="scrollable-container">
         <div className="tasks-list">
         <div className="category-section">
