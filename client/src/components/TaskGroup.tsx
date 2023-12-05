@@ -107,18 +107,31 @@ const TaskGroup = ({ username }: Props) => {
       const memberResponse = await Axios.get(
         `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/get_group_members/${groupID}`
       );
-      const member = memberResponse.data;
-      //Check if the user is the owner
+      const members = memberResponse.data;
+      // Check if the user is one of the members
+      const isMember = members.includes(username);
+      // Check if the user is the owner
       const response = await Axios.get(
         `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/check_owner/${username}/${groupID}`
       );
-
-      setCurrentGroupInfo({
-        groupID,
-        isOwner: response.data.message === "User is owner",
-        tasks: tasks,
-        members: member,
-      });
+      await getListOfGroupIDs();
+      if (isMember) {
+        setCurrentGroupInfo({
+          groupID,
+          isOwner: response.data.message === "User is owner",
+          tasks: tasks,
+          members: members,
+        });
+      } else {
+        // Handle the case where the user is not a member
+        setCurrentGroupInfo({
+          groupID: "",
+          isOwner: false,
+          tasks: [],
+          members: [],
+        });
+        console.log("User is not a member of this group.");
+      }
       console.log(currentGroupInfo);
     } catch (error) {
       console.error("Error fetching group ownership info:", error);
