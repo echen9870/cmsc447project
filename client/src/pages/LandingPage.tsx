@@ -24,18 +24,20 @@ const LandingPage = ({ onLogin }: Props) => {
   return (
     <div
       className="min-h-screen flex flex-col justify-between text-white bg-gray-900 h-screen relative"
-      style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url(${backgroundImage})`, backgroundSize: 'cover' }}
+      
     >
       <header className=" text-center py-4">
         <h1 className="text-2xl font-bold">TaskMeister</h1>
       </header>
 
-      <section className="container mx-auto text-center my-8">
-        <h2 className="text-3xl font-semibold mb-4 ">Welcome to TaskMeister</h2>
-        <p className="text-white mb-4">
-          A collaborative task management system designed for multiple users
-        </p>
-      </section>
+      <section className="container mx-auto flex justify-center items-center my-8">
+    <div className="text-center px-4">
+      <h2 className="text-3xl font-semibold mb-4">Welcome to TaskMeister</h2>
+      <p className="text-white mb-4">
+        A collaborative task management system designed for multiple users
+      </p>
+    </div>
+  </section>
       <button
         className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mx-auto max-w-md"
         onClick={openModal}
