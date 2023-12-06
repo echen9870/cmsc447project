@@ -29,7 +29,7 @@ const Social = ({ users, onMemberAdd, onMemberDelete, isOwner, username }: Props
             className="flex items-center justify-between border-gray-400 border-2 rounded-md p-2 mb-2 bg-gray-700"
           >
             <p className="text-sm flex-grow">{user}</p>
-            {isOwner && user !== username && (
+            {((isOwner && user !== username) || (!isOwner && user == username)) && (
               <button
                 className="text-red-500 hover:text-red-700 focus:outline-none"
                 onClick={() => handleDeleteMember(user)}

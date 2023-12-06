@@ -13,3 +13,5 @@ Always run `node app.js`
 As of Sept. 30th, frontend and backend can interact
 
 As of Nov. 18, the server is hosted on Heroku at https://todolist-taskmeister-78653fbaf01e.herokuapp.com/. The source code is available at: https://github.com/IcramDoku/heroku-new. All the current routes we have are working from Heroku, and the source code will be updated with any new routes we might add.
+
+As of Dec 1, 2023: WE ARE LIVE! https://echen9870.github.io/cmsc447project/

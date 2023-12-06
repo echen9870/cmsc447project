@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Axios from "axios";
 import "./AllTasks.css"; // CSS file
+import nextSunday from "date-fns/nextSunday";
 
 interface Props {
   username: string;
@@ -47,28 +48,27 @@ const AllTasks = ({ username }: Props) => {
 
   // Categorize tasks into "Overdue," "Due Today," "Due This Week," and "Upcoming"
   const now = new Date();
-  now.setHours(23, 59, 59, 599);
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  const oneWeekFromNow = new Date(now);
-  oneWeekFromNow.setDate(now.getDate() + 6);
-  console.log(now)
-  console.log(yesterday)
-  console.log(oneWeekFromNow)
+  const today = new Date(now);
+  today.setHours(23, 59, 59, 599);
+  today.setDate(now.getDate());
+  const oneWeekFromNow = nextSunday(today);
+  console.log(now);
+  console.log(today);
+  console.log(oneWeekFromNow);
 
   const overdueTasks = tasks.filter(
-    (task) => new Date(task.dueAt) <= yesterday && !task.completed
+    (task) => new Date(task.dueAt) <= now && !task.completed
   );
 
   const dueTodayTasks = tasks.filter(
     (task) =>
-      new Date(task.dueAt) > yesterday &&
-      new Date(task.dueAt) <= now
+      new Date(task.dueAt) > now &&
+      new Date(task.dueAt) <= today
   );
 
   const dueThisWeekTasks = tasks.filter(
     (task) =>
-      new Date(task.dueAt) > now &&
+      new Date(task.dueAt) > today &&
       new Date(task.dueAt) <= oneWeekFromNow
   );
 
@@ -95,8 +95,8 @@ const AllTasks = ({ username }: Props) => {
   };
 
   return (
-    <div className="all-tasks-container">
-      <h1 className="page-title">{username}'s Tasks Stream</h1>
+    <div className="h-screen overflow-y-auto overflow-x-hidden pb-40">
+      <h1 className="page-title">{username}'s Tasks Stream:</h1>
       <div className="scrollable-container">
         <div className="tasks-list">
         <div className="category-section">

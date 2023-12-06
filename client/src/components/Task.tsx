@@ -139,32 +139,34 @@ const Task = (task: Props) => {
 
   //Assign/Unassign users to the task
   const handleAssignUserToTask = async () => {
-    console.log(task._id);
-    console.log(selectedAssignMember);
-    handleAssignShow();
-    if (!task.assignedUsers.includes(selectedAssignMember)) {
-      // Assigns the user to the task
-      try {
-        const response = await Axios.put(
-          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/add_member_to_task/${task._id}/${selectedAssignMember}`
-        );
-        console.log(response);
-      } catch (error) {
-        console.error("Error:", error);
+    if(!isEdit){
+      console.log(task._id);
+      console.log(selectedAssignMember);
+      handleAssignShow();
+      if (!task.assignedUsers.includes(selectedAssignMember)) {
+        // Assigns the user to the task
+        try {
+          const response = await Axios.put(
+            `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/add_member_to_task/${task._id}/${selectedAssignMember}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      } else {
+        //Unassign the user from the task
+        try {
+          const response = await Axios.put(
+            `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/remove_member_to_task/${task._id}/${selectedAssignMember}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
-    } else {
-      //Unassign the user from the task
-      try {
-        const response = await Axios.put(
-          `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/task/remove_member_to_task/${task._id}/${selectedAssignMember}`
-        );
-        console.log(response);
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      task.onTaskRefresh();
+      setSelectedAssignMember("");
     }
-    task.onTaskRefresh();
-    setSelectedAssignMember("");
   };
 
   return (
@@ -175,26 +177,39 @@ const Task = (task: Props) => {
         {task.completed ? "☑" : "☐"}
       </button>
       <div className="task flex flex-col flex-1">
-          <div className="task-header flex justify-between items-center">
+        <div className="task-header flex justify-between items-center">
           {/* Task Name Section */}
           {isEdit ? (
             <input
               name="name"
               type="text"
               value={curTask.name}
-              className="rounded bg-prismPurple outline-grey-400 text-white flex-grow"
+              className="hover:font-italic rounded mr-2 bg-prismPurple outline-grey-400 text-white flex-grow"
               onChange={(e) => handleTaskEdit(e)}
+              onBlur={handleEditTaskSubmit}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault(); 
+                  handleEditTaskSubmit();
+                }
+              }}
             />
           ) : (
             <div onClick={handleEditTask}>
               <b className="cursor-pointer">{curTask.name}</b>
             </div>
           )}
+          <div className="task-header flex justify-between items-center">
+            {/*Task Description Section*/}
+            <button className="px-2 mr-2 text-white text-xs rounded bg-prismLightPurple hover:bg-black" onClick={handleExpandClick}>
+              {isExpanded ? "Confirm" : "Add Note"}
+            </button>
 
-          {/* Delete Button Section */}
-          <button className="hover:bg-black focus:outline-none" onClick={() => onTaskDelete()}>
-            ❌
-          </button>
+            {/* Delete Button Section */}
+            <button className="hover:bg-black focus:outline-none" onClick={() => onTaskDelete()}>
+              ❌
+            </button>
+          </div>
         </div>
 
         {/*Task DueAt Section*/}
@@ -205,6 +220,13 @@ const Task = (task: Props) => {
             className="rounded bg-prismPurple outline-grey-400 text-white"
             value={curTask.dueAt}
             onChange={(e) => handleTaskEdit(e)}
+            onBlur={handleEditTaskSubmit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleEditTaskSubmit(); 
+              }
+            }}
           ></input>
         ) : (
           <div onClick={handleEditTask}>
@@ -213,33 +235,16 @@ const Task = (task: Props) => {
         )}
         <div className="flex border border-solid border-gray-400 border-1 rounded-md">
           <p className="px-2 border-r-2 text-xs text-gray-400">Assigned To:</p>
-          {task.assignedUsers.map((member) => (
-            <p className="px-2 border-x-2 text-xs text-blue-400">{member}</p>
-          ))}
-          <p className="px-2 border-l-2"></p>
-        </div>
-        {/*Task Edit Section*/}
-        <div className="d-flex">
-        
-          {isEdit ? (
-            <button className="" onClick={handleEditTaskSubmit}>
-              Confirm
-            </button>
-          ) : (
-            <button className="purpleButton" onClick={handleEditTask}>
-              Edit
-            </button>
-          )}
           {/*Task Assigned Section*/}
           <button
-            className="finishButton"
+            className="px-2 border-x-2 text-gray-200 text-xs text-blue-400 rounded bg-blue-500 hover:bg-blue-600"
             onClick={handleAssignUserToTask}
           >
             {(!task.assignedUsers.includes(selectedAssignMember)) ? "Assign" : "Unassign"}
           </button>
           {isDropdownVisible && (
             <select
-              className="text-white rounded-lg bg-prismPurple "
+              className="text-white text-xs rounded-lg bg-prismPurple "
               id="dropdown"
               value={selectedAssignMember}
               onChange={(e) => {
@@ -255,10 +260,13 @@ const Task = (task: Props) => {
               ))}
             </select>
           )}
-          {/*Task Description Section*/}
-          <button className="greenButton" onClick={handleExpandClick}>
-            {isExpanded ? "Confirm" : "Add Description"}
-          </button>
+          {task.assignedUsers.map((member) => (
+            <p className="px-2 border-x-2 text-xs text-blue-400">{member}</p>
+          ))}
+          <p className="px-2 border-l-2"></p>
+        </div>
+        {/*Task Edit Section*/}
+        <div className="d-flex">
         </div>
         {/*Task Notes Section*/}
         {isExpanded && (

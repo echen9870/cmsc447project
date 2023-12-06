@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   const storedLoggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -10,7 +11,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(storedLoggedIn);
   const [username, setUsername] = useState(storedUsername);
 
-  const handleLoginIn = (username:string) => {
+  const handleLoginIn = (username: string) => {
     const newLoggedIn = !loggedIn;
     setLoggedIn(newLoggedIn);
     setUsername(username);
@@ -37,7 +38,7 @@ function App() {
       {loggedIn ? (
         <Dashboard onLogout={handleLogout} username={username} />
       ) : (
-        <LoginPage onLogin={handleLoginIn} />
+        <LandingPage onLogin={handleLoginIn}/>
       )}
     </div>
   );

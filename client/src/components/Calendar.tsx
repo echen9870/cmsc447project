@@ -155,11 +155,11 @@ const Calendar = ({ username }: Props) => {
   };
 
   return (
-    <div className="calendar">
+    <div className="h-screen overflow-y-auto overflow-x-hidden pb-40">
       <div className="header">
         <h2>{format(currentDate, 'MMMM yyyy')}</h2>
-        <button onClick={prevMonth}>←</button>
-        <button onClick={handleGoToToday}>Today</button>
+        <button className="mr-0.5" onClick={prevMonth}>←</button>
+        <button className="mr-0.5" onClick={handleGoToToday}>Today</button>
         <button onClick={nextMonth}>→</button>
       </div>
       <div className="container">
@@ -205,25 +205,25 @@ const Calendar = ({ username }: Props) => {
         )}
       </div>
       <div className={`task-modal ${showModal ? 'visible' : ''}`}>
-      {selectedTask && (
-        <div>
-          {Array.isArray(selectedTask) && selectedTask.map((task: Task) => (
-            <div key={task._id} className="task-card">
-              <h2 className="task-name">{task.name}</h2>
-              <p className="task-description">{task.description}</p>
-              <p className="task-assigned-users">
-                Assigned Users: {task.assignedUsers.join(", ")}
-              </p>
-              <p className={`task-status ${task.completed ? "done" : "undone"}`}>
-                {task.completed ? "Done" : "Undone"}
-              </p>
-              <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
-            </div>
-          ))}
-          <button className="bg-gray-900" onClick={() => setShowModal(false)}>Close</button>
-        </div>
-      )}
-    </div>
+        {selectedTask && (
+          <div>
+            {Array.isArray(selectedTask) && selectedTask.map((task: Task) => (
+              <div key={task._id} className="task-card">
+                <h2 className="task-name">{task.name}</h2>
+                <p className="task-description">{task.description}</p>
+                <p className="task-assigned-users">
+                  Assigned Users: {task.assignedUsers.join(", ")}
+                </p>
+                <p className={`task-status ${task.completed ? "done" : "undone"}`}>
+                  {task.completed ? "Done" : "Undone"}
+                </p>
+                <p className="task-due-date">Due Date: {formatDueDate(task.dueAt)}</p>
+              </div>
+            ))}
+            <button className="justify-right bg-gray-700 hover:bg-black" onClick={() => setShowModal(false)}>Close</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

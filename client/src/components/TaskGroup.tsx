@@ -62,7 +62,8 @@ const TaskGroup = ({ username }: Props) => {
   useEffect(() => {
     const storedValue = sessionStorage.getItem('isSidebarMembers');
     if (storedValue !== null) {
-      setSidebarMembers((prevValue: boolean) => prevValue !== (storedValue === 'true'));
+      //this change saves the users choice to hide or show members list
+      setSidebarMembers(storedValue === 'true');
     }
   }, []);
 
@@ -106,18 +107,31 @@ const TaskGroup = ({ username }: Props) => {
       const memberResponse = await Axios.get(
         `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/get_group_members/${groupID}`
       );
-      const member = memberResponse.data;
-      //Check if the user is the owner
+      const members = memberResponse.data;
+      // Check if the user is one of the members
+      const isMember = members.includes(username);
+      // Check if the user is the owner
       const response = await Axios.get(
         `https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/check_owner/${username}/${groupID}`
       );
-
-      setCurrentGroupInfo({
-        groupID,
-        isOwner: response.data.message === "User is owner",
-        tasks: tasks,
-        members: member,
-      });
+      await getListOfGroupIDs();
+      if (isMember) {
+        setCurrentGroupInfo({
+          groupID,
+          isOwner: response.data.message === "User is owner",
+          tasks: tasks,
+          members: members,
+        });
+      } else {
+        // Handle the case where the user is not a member
+        setCurrentGroupInfo({
+          groupID: "",
+          isOwner: false,
+          tasks: [],
+          members: [],
+        });
+        console.log("User is not a member of this group.");
+      }
       console.log(currentGroupInfo);
     } catch (error) {
       console.error("Error fetching group ownership info:", error);
@@ -142,20 +156,29 @@ const TaskGroup = ({ username }: Props) => {
 
   //Creating a new group
   const handleGroupAdd = async () => {
-    const { name, members } = formData;
-    try {
-      const response = await Axios.post(
-        "https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/create_group",
-        {
-          name,
-          members,
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.error("Error:", error);
+    // Prompt the user for the group name
+    const groupName = prompt("Enter New Group Name:");
+  
+    // Check if the user provided a group name
+    if (groupName !== null && groupName.trim() !== "") {
+      const { members } = formData;
+  
+      try {
+        const response = await Axios.post(
+          "https://todolist-taskmeister-78653fbaf01e.herokuapp.com/group/create_group",
+          {
+            name: groupName,
+            members,
+          }
+        );
+  
+        console.log(response);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+  
+      getListOfGroupIDs();
     }
-    getListOfGroupIDs();
   };
 
   //Deleting a group
@@ -260,9 +283,9 @@ const TaskGroup = ({ username }: Props) => {
     <div className="flex">
       {/* Sidebar */}
       {isSidebarVisible && (
-      <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900">
+      <aside className="w-1/6 p-4 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900 rounded-md pb-40">
         {/* Your sidebar content */}
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full overflow-y-auto">
           <div className="flex-1">
             {/* Rest of your sidebar content */}
             <button
@@ -301,9 +324,9 @@ const TaskGroup = ({ username }: Props) => {
       </button>
 
       {/* Main Content */}
-      <main className="bg-black flex-1 p-4 h-screen flex flex-col pb-40"
+      <main className="bg-black rounded-md flex-1 p-4 h-screen flex flex-col pb-40"
       style={{
-        background: currentGroupInfo.groupID ? 'black' : `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)),url(${backgroundImage})`,
+        background: currentGroupInfo.groupID ? 'black' : `linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)),url(${backgroundImage})`,
         backgroundSize: 'cover',
       }}
       >
@@ -320,7 +343,7 @@ const TaskGroup = ({ username }: Props) => {
           {currentGroupInfo.tasks && (currentGroupInfo.tasks as Task[]).length > 0 ? (
             <div className="h-5/5 overflow-y-auto">
               <div>
-                <h1>Uncompleted Task(s):</h1>
+                <h1 className="text-gray-300">Uncompleted Task(s):</h1>
                 {currentGroupInfo.tasks &&
                   (currentGroupInfo.tasks as Task[]).map(
                     (task) =>
@@ -334,9 +357,9 @@ const TaskGroup = ({ username }: Props) => {
                       )
                   )}
               </div>
-              <div className="flex-1 border-t-2 border-gray-400"></div>{" "}
+              
               <div>
-                <h1>Completed Task(s):</h1>
+                <h1 className="text-gray-300">Completed Task(s):</h1>
                 {currentGroupInfo.tasks &&
                   (currentGroupInfo.tasks as Task[]).map(
                     (task) =>
@@ -364,7 +387,7 @@ const TaskGroup = ({ username }: Props) => {
 
       {/* Sidebar for Members, only when a group is selected */}
       {isSidebarMembers && currentGroupInfo.groupID && (
-        <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900">
+        <aside className="w-1/6 p-4 pb-40 text-white h-screen overflow-y-auto overflow-x-hidden bg-gray-900 rounded-md">
           <div className=" overflow-y-auto ">
             {currentGroupInfo.groupID && (
               <Social

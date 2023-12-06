@@ -117,6 +117,28 @@ router.post("/login_user", async (req, res) => {
   }
 });
 
+// Route to find email
+router.get("/get_email/:username", async (req, res) => {
+  const usernameID = req.params.username;
+  try {
+    const user = await User.findOne({ username: usernameID });
+
+    if (!user) {
+      // If user is not found, return an appropriate response
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const email = user.email;
+
+    // Return the email from this route
+    res.json({ email });
+  } catch (error) {
+    console.error(error);
+    // Handle other errors and return an appropriate response
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Express route to handle the deletion of a user and associated data
 router.delete("/delete_user/:username", async (req, res) => {
   const usernameID = req.params.username;
@@ -194,7 +216,12 @@ router.post("/password_recovery", async (req, res) => {
       from: 'Task Meister the.task.meister.team@gmail.com', 
       subject: 'Password Reset Verification Code',
       text: `Your verification code is: ${verificationCode}`,
-      html: `<p>Hello,<br> Your verification code is: <b>${verificationCode}</b></p>`
+      html: `
+        <p>Hello ${user.username},</p>
+        </p> Your verification code is: <b>${verificationCode}</b></p> 
+        <p>Best regards,</p>
+        <p>The Task Meister Team</p>
+      `,
     };
 
     await transporter.sendMail(emailData);
@@ -284,7 +311,13 @@ router.post("/verify_and_reset_password", async (req, res) => {
       from: 'Task Meister the.task.meister.team@gmail.com',
       subject: 'Password Updated',
       text: `Your password has been successfully updated. If you didn't perform this action, please contact us.`,
-      html: `<p>Hello,<br> Your password has been successfully updated. If you didn't perform this action, please contact us.</p>`
+      html: `
+        <p>Hello ${user.username},</p>
+        <p>Your password has been successfully updated. If you didn't perform this action, please contact us.</p>
+        <p>You can reply to this email, and we will get back to you as soon as possible.</p>
+        <p>Best regards,</p>
+        <p>The Task Meister Team</p>
+      `,      
     };
 
     await transporter.sendMail(emailData);

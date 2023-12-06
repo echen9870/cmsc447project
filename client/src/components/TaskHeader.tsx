@@ -54,21 +54,21 @@ const Taskheader = ({
 
   return (
     <>
-      <div className="bg-prismDarkPurple content-right">
+      <div className="bg-prismDarkPurple content-right rounded-md">
         <button
-          className="bg-green-500 text-white m-2 py-1 px-2 rounded hover:bg-green-600"
+          className="text-green-500 m-2 py-1 px-2 rounded hover:text-green-600"
           onClick={() => onTaskAdd(groupID)}
         >
           Add Task
         </button>
         <button
-          className="bg-blue-500 text-white m-2 py-1 px-2 rounded hover:bg-blue-600"
+          className="text-blue-500 m-2 py-1 px-2 rounded hover:text-blue-600"
           onClick={() => handleAllTaskStatusChange(true)}
         >
           Finish All
         </button>
         <button
-          className="bg-prismLightPurple text-white m-2 py-1 px-2 rounded hover:bg-prismDarkPurple"
+          className="text-gray-400 m-2 py-1 px-2 rounded hover:text-gray-500"
           onClick={() => handleAllTaskStatusChange(false)}
         >
           Unfinish All
@@ -76,14 +76,14 @@ const Taskheader = ({
         {isOwner && (
           <>
             <button
-              className="bg-red-500  text-white m-2 py-1 px-2 rounded hover:bg-red-600"
+              className="text-red-500 m-2 py-1 px-2 rounded hover:text-red-600"
               onClick={onTaskDeleteAll}
             >
               Delete All
             </button>
             {isOwner && (
               <button
-                className="bg-purple-500  text-white ml-2 m-2 py-1 px-2 rounded hover:bg-purple-600"
+                className="text-purple-500 ml-2 m-2 py-1 px-2 rounded hover:text-purple-600"
                 onClick={() => setChangeNameView(!changeNameView)}
               >
                 Change Name
@@ -100,7 +100,7 @@ const Taskheader = ({
             )}
             {changeNameView && (
               <button
-                className="bg-purple-500  text-white ml-2 m-2 py-1 px-2 rounded hover:bg-purple-600"
+                className="text-purple-500 ml-2 m-2 py-1 px-2 rounded hover:text-purple-600"
                 onClick={() => {
                   setChangeNameView(!changeNameView);
                   onGroupNameChange(groupID, newName);
@@ -112,7 +112,7 @@ const Taskheader = ({
             )}
             {isOwner && (
               <button
-                className="bg-red-500  text-white m-2 py-1 px-2 rounded hover:bg-red-600"
+                className="text-red-500 m-2 py-1 px-2 rounded hover:text-red-600"
                 onClick={() => onGroupDelete(groupID)}
               >
                 Delete Group
