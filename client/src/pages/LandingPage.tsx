@@ -4,7 +4,6 @@ import LoginPage from "./LoginPage";
 import Modal from "react-modal";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import backgroundImage from "./bg-image.jpg";
 
 interface Props {
   onLogin: (username: string) => void;
