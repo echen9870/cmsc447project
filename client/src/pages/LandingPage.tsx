@@ -1,9 +1,10 @@
 // LandingPage.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import LoginPage from "./LoginPage";
 import Modal from "react-modal";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import backgroundImage from "./bg-image.jpg";
 
 interface Props {
   onLogin: (username: string) => void;
@@ -21,19 +22,24 @@ const LandingPage = ({ onLogin }: Props) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
-      <header className="bg-prismDark text-white text-center py-4">
+    <div
+      className="min-h-screen flex flex-col justify-between text-white bg-gray-900 h-screen relative"
+      style={{
+
+      }}
+    >
+      <header className=" text-center py-4">
         <h1 className="text-2xl font-bold">TaskMeister</h1>
       </header>
 
       <section className="container mx-auto text-center my-8">
         <h2 className="text-3xl font-semibold mb-4 ">Welcome to TaskMeister</h2>
-        <p className="text-gray-700 mb-4">
+        <p className="text-white mb-4">
           A collaborative task management system designed for multiple users
         </p>
       </section>
       <button
-        className="bg-prismDark text-white py-2 px-4 rounded hover:bg-prismLightPurple mx-auto max-w-md"
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mx-auto max-w-md"
         onClick={openModal}
       >
         Sign Up/ Login
