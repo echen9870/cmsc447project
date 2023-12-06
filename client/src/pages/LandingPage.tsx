@@ -24,9 +24,7 @@ const LandingPage = ({ onLogin }: Props) => {
   return (
     <div
       className="min-h-screen flex flex-col justify-between text-white bg-gray-900 h-screen relative"
-      style={{
-
-      }}
+      style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url(${backgroundImage})`, backgroundSize: 'cover' }}
     >
       <header className=" text-center py-4">
         <h1 className="text-2xl font-bold">TaskMeister</h1>
